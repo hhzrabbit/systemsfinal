@@ -27,9 +27,12 @@ Topics used:
 * Networking: Send essential game data from server to each player (client) participating
 
 Components and Role Delegation:
-* Basic server to allow connections until full (process management, networking, and semaphores) - 
-* Public chat during the council discussions (networking) - 
-* Nighttime -- villagers wait, people with special roles do their thing - 
+* William (interim PM?)
+  * (?) Public chat during the council discussions (networking)
+* Joel
+  * Game functionality (daytime/nighttime events, voting)
+* Haley
+  * Server/Client connection, basic server to allow connections until full (process management, networking, and semaphores)
 
 Data Structures:
 * Taking turns to vote will require a queue
