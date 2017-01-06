@@ -14,39 +14,51 @@ Basic: Clients will connect to the server and the server will track how many pla
 
 Lobby (Tentative): To join games, new users can join and set their usernames in the lobby, chat in public and in private, and time permitting, party up with other players. They join (or spectate) games from a menu, either picking the game name (which will display number of players in the game right now), or choose to be randomly put into a game.
 
-USER INTERFACE: Terminal. Completely text-based. Users interact in lobby with designated commands, and respond to in game prompts with specific choices for answers (e.g. do you vote to lynch this person? (Y/N))
+USER INTERFACE: Terminal. Completely text-based. Users interact with designated commands and respond to in game prompts with specific choices for answers (e.g. do you vote to lynch this person? (Y/N))
 
 TECHNICAL DESIGN
 Topics used:
-* Allocating memory: It's C. We will always have to allocate memory.
-* Working with files: Save the narratives for specific characters and pull when needed; need to read from /dev/urandom to decide random roles in beginning of game
-* Finding information about files (stat and such): Information about game time? Probably not necessary >:(
-* Processes (forking, exec etc.): need separate processes for chat and game (one to wait for action from each player)
-* Signals: Catching EXIT signal to print a quit confirmation message
-* Shared memory, semaphores: The actions of certain roles requires interaction with other players; Semaphores control this make sure one person gets only one request at a time
-* Networking: Send essential game data from server to each player (client) participating
+Allocating memory: Creating player data dependent on number of players
+Working with files: Save the narratives for specific characters and pull when needed; need to read from /dev/urandom to decide random roles in beginning of game
+Processes (forking, exec etc.): forking -- need separate processes for chat and voting during the council meetings
+Signals: Catching EXIT signal to print a quit confirmation message
+Shared memory, semaphores: The actions of certain roles require interaction with other players; Semaphores control this make sure one person gets only one request at a time
+Networking: Players connect up to one server to be part of the same game; send essential game data from server to each player (client) participating
 
 Components and Role Delegation:
-* William (interim PM?)
-  * (?) Public chat during the council discussions (networking)
-* Joel
-  * Game functionality (daytime/nighttime events, voting)
-* Haley
-  * Server/Client connection, basic server to allow connections until full (process management, networking, and semaphores)
+- William
+    - Public chat during the council discussions (networking)
+- Joel
+    - Game functionality (daytime/nighttime events, voting) (file work)
+- Haley
+    - Project Manager, loosely speaking
+    - Server/Client connection, basic server to allow connections until full (process management, networking, and semaphores)
 
 Data Structures:
-* Taking turns to vote will require a queue
-* Custom data struct to store player data
-  * Alive or Dead
-  * Role (villager or mafia or etc.)
+Custom data struct to store player data
+- Name
+- Alive or Dead
+- Role (villager or mafia or etc.)
 
 Algorithms:
-* Client/Server Handshake to verify connection upon game start
+- Client/Server Handshake to verify connection upon game start
+- Mafia forced consensus voting scheme
 
 Timeline:
-* Will finish project by: Project deadline (hopefully)
+1-7 Figure out general flow of the game, procession of events, what prompts we need and when/how each should be triggered [Everyone]
+1-9 Voting [Joel]
+1-11 Networking connection between one client and a server [Haley]
+1-13 Mafia Functionality [Joel]
+1-14 Networking connection between multiple clients and a server [Haley]
+1-15 Capping number of connections to the server and triggering start of game upon reach of limit [Haley]
+1-15 Half Chat Functionality (between 2 terminal sessions) [William]
+1-16 Police Functionality [Joel]
+1-18 Mechanism to start game even if not full capacity reached [Haley]
+1-19 Doctor Functionality [Joel]
+1-19 Full Chat Functionality [William]
+Will finish project by: Project deadline (hopefully) - Presume the 19th for now.
 
 
 EXTRAS
-* Will / Death Note to be stored for each player
-* Private messaging
+Will / Death Note to be stored for each player
+Private messaging
