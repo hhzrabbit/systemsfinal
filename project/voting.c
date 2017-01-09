@@ -8,6 +8,10 @@
 //Send message to all clients
 //Gather responses from all clients
 
+//receiveVote()
+//listen()
+//sendAll()
+
 
 //voting process
 void daytime(){//this is probably in the main function
@@ -16,7 +20,7 @@ void daytime(){//this is probably in the main function
 
   int * playerNoms = (int *)calloc(n, sizeof(int)); //also initialize outside please
   
-  int newNom = dayListen();
+  int newNom = nomineeListen();
   
   if (newNom != -1) {
     *(playerNoms + newNom) += 1;
@@ -27,8 +31,6 @@ void daytime(){//this is probably in the main function
     }
   }
 
-
-  
   if (daytimeRemaining % 5 = 0) sendAll("Daytime remaining: %d\n", daytimeRemaining);
   
   if (timer == 0) sendAll("Daytime has ended. Go to sleep.\n");
@@ -68,3 +70,4 @@ void voteResponse(){
 void sendAll(char * msg){
 
 }
+
