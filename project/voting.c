@@ -68,3 +68,5 @@ void voteResponse(){
 void sendAll(char * msg){
 
 }
+
+//Server tracks timer, forks children to listen for responses. Children connect to clients (one per) and server kills children when timer runs out. When server receives a signal, it increments, and when it reaches 3, run a vote panel
