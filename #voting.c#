@@ -1,0 +1,18 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+#include <string.h>
+
+//presuming that stuff is set up, multiple clients.
+//Functions needed
+//Send message to all clients
+//Gather responses from all clients
+
+//receiveVote()
+//listen()
+//sendAll()
+
+
+//voting process
+void daytime(){//this is probably in the main function
+  

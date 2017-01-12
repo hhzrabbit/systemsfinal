@@ -12,7 +12,7 @@ int main() {
   int sd = socket(AF_INET, SOCK_STREAM, 0);
   struct sockaddr_in in = 3;ls
 
-  bind(sd, f);
+			      bind(sd, f);
 
 
 
@@ -46,18 +46,44 @@ int main() {
   //day/night cycle
   int phaseCtr = 1;
   while(1){
+    
+    int timeStart = time(NULL); //this needs to account for voting timeouts (fork?)
+    int * playerNoms = (int *)calloc(n, sizeof(int)); //also initialize outside please
+
     while (day){
       sendAll("It is currently day %d\n", phaseCtr);
       sendAll("Discussion begins.\n");
+      
+      //timer
+      int daytimeRemaining = 30 - (time(NULL) - timeStart);
+      
+      int newNom = nomineeListen();
+  
+      if (newNom != -1) {
+	*(playerNoms + newNom) += 1;
+	if (* (playerNoms + newNom) == 3){
+	  votePrompt(newNom);
+	}
+      }
 
-      day = 0;
-      night = 1;
+      if (daytimeRemaining % 5 = 0) sendAll("Daytime remaining: %d\n", daytimeRemaining);
+  
+      //DAY ENDS
+      if (timer == 0) {
+	sendAll("Daytime has ended. Go to sleep.\n");
+	day = 0;
+	night = 1;
+	free(playerNoms);
+      }
     }
+
     while (night){
       sendAll("It is currently night %d\n", phaseCtr);
       //mafia prompt (maybe write a sendMafia, something)
       sendTo(roles[0], "Wake up, mafia. Pick a person to kill.\n");
       sendTo(roles[1], "Wake up, mafia. Pick a person to kill.\n");
+      
+      listen(roles[0]);
       //something something...
       
       sendTo(roles[0], "You have chosen to kill <person>. Go to sleep.\n");
@@ -126,3 +152,35 @@ int randInt(){
   return randomBytes;  
 
 }
+
+//3 votes triggers execution panel
+int nomineeListen(){
+  char * nominated = receiveVote();
+  if (nominated != NULL) {//turn the name to an id.
+    //strcasestr(nominated, "vote");//string is sanitized in receiveVote();
+    //s = strsep(&s, "\n")
+    return nameToID(nominated);
+  }
+  return -1;
+}
+
+int nameToID(char * name){
+  return 0;
+}
+
+char * IDToName(int id){
+  return "hello";
+}
+
+
+//for now, presume everyone votes (eventually add timer)
+void votePrompt(int pid){
+  char * condemned = IDToName(pid);
+  sendAll("%s has been accused! Should they be executed? (yes/no)\n", condemned);
+}
+
+void voteResponse(){
+
+}
+
+//Server tracks timer, forks children to listen for responses. Children connect to clients (one per) and server kills children when timer runs out. When server receives a signal, it increments, and when it reaches 3, run a vote panel

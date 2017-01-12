@@ -1,5 +1,0 @@
-%s has joined the game!
-Welcome to Mafia!
-Now assigning roles...
-It is now Day %d
-It is now Night %d
