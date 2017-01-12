@@ -31,14 +31,14 @@ int main() {
     roles[n] = n + randInt() % (playerCount - n);
   }
 
-  sendTo(0, "You are in the mafia! Your partner is %s. Survive!\n", idToName(1));
-  sendTo(1, "You are in the mafia! Your partner is %s. Survive!\n", idToName(0));
-  sendTo(2, "You are the cop! Find out who the mafia are.\n");
+  sendTo(roles[0], "You are in the mafia! Your partner is %s. Survive!\n", idToName(roles[1]));
+  sendTo(roles[1], "You are in the mafia! Your partner is %s. Survive!\n", idToName(roles[0]));
+  sendTo(roles[2], "You are the cop! Find out who the mafia are.\n");
   for (n = 3; n < playerCount, n++){
-    sendTo(n, "You are a townsperson! Find out who the mafia are.\n");
+    sendTo(roles[n], "You are a townsperson! Find out who the mafia are.\n");
   }
 
-  //  roles[0] = 1 means player 0 has role 1, which is mafia
+  //  roles[0] = 1 means player 1 has role 0, which is mafia. index is the player id. 
 
   int day, night;
   day = 1;
@@ -48,11 +48,35 @@ int main() {
   while(1){
     while (day){
       sendAll("It is currently day %d\n", phaseCtr);
+      sendAll("Discussion begins.\n");
+
       day = 0;
       night = 1;
     }
     while (night){
       sendAll("It is currently night %d\n", phaseCtr);
+      //mafia prompt (maybe write a sendMafia, something)
+      sendTo(roles[0], "Wake up, mafia. Pick a person to kill.\n");
+      sendTo(roles[1], "Wake up, mafia. Pick a person to kill.\n");
+      //something something...
+      
+      sendTo(roles[0], "You have chosen to kill <person>. Go to sleep.\n");
+      sendTo(roles[1], "You have chosen to kill <person>. Go to sleep.\n");
+
+      //cop prompt
+      sendTo(roles[2], "Wake up, cop. Pick a person to investigate.\n");
+
+      int copChoice = 0;
+      while (copChoice != 2){//don't pick yourself silly...
+      }
+      
+      if (roles[0] == copChoice || roles[1] == copChoice){
+	sendTo(roles[2], "This person is a member of the mafia.\n");
+      }
+      else {
+	sendTo(roles[2], "This person is an innocent townsperson.\n");
+      }
+      
       night = 0;
       day = 1;
     }
