@@ -1,13 +1,20 @@
 Format: topherM -- 1999-12-31 23:59
 
 ===========================
+
 joelY -- 2017-01-08 17:49
 Started work on voting, there are lots of unwritten functions
-===========================
 
 ===========================
+
+haleyZ -- 2017-01-09 11:00
+wrote out the flow of the game so we know what happens first, what follows what, etc
+
+===========================
+
 joelY -- 2017-01-10 20:29
 Role delegation completed
 Skeleton of day/night cycle written 
 End Game completed
+
 ===========================
