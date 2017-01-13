@@ -10,10 +10,8 @@
 
 int main() {
   int sd = socket(AF_INET, SOCK_STREAM, 0);
-  struct sockaddr_in in = 3;ls
-
-			      bind(sd, f);
-
+  struct sockaddr_in in = 3;
+  bind(sd, f);
 
 
   //per connection, assign ID. Each player is running a client.
