@@ -8,6 +8,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
+#DEFINE PLAYERCOUNT 8
 int main() {
   int sd = socket(AF_INET, SOCK_STREAM, 0);
   struct sockaddr_in in = 3;ls
@@ -22,8 +23,9 @@ int main() {
   //everyone has connected, with IDs according to connection order
   sendAll("Welcome to Mafia!");
   //get a set timer function in here
-  int playerCount = 8;
-  int roles[playerCount];
+  int playerCount = PLAYERCOUNT;
+  int roles[PLAYERCOUNT];
+  int dead[PLAYERCOUNT]; //0 is alive, 1 is dead
   int n;
   sendAll("Now assigning roles");
   //distribute 1-playercount among 1-8
@@ -49,27 +51,53 @@ int main() {
     
     int timeStart = time(NULL); //this needs to account for voting timeouts (fork?)
     int * playerNoms = (int *)calloc(n, sizeof(int)); //also initialize outside please
-
+    int daytimeRemaining = 30;
     while (day){
       sendAll("It is currently day %d\n", phaseCtr);
       sendAll("Discussion begins.\n");
       
       //timer
-      int daytimeRemaining = 30 - (time(NULL) - timeStart);
-      
+      int timeElapsed = (time(NULL) - timeStart);
+
+      //all information passes through server.
       int newNom = nomineeListen();
   
       if (newNom != -1) {
 	*(playerNoms + newNom) += 1;
 	if (* (playerNoms + newNom) == 3){
+	  //vote triggered
 	  votePrompt(newNom);
+	  daytimeRemaining -= timeElapsed;
+	  int voteStart = time(NULL);
+	  sendAll("Vote begins. Minimum 4 votes to execute. 30 seconds\n");
+	  int yesVotes = 0;
+	  int noVotes = 0;
+	  while (time(NULL) - voteStart < 30){
+	    
+	    
+	  }
+
+	  if (yesVotes < noVotes){
+	    sendAll("The verdict is innocent. The accused lives.\n");
+	  }
+	  else if (yesVotes == noVotes){
+	    sendAll("Tied vote. The accused lives.\n");
+	  }
+	  else if (yesVotes < 4){
+	    sendAll("Not enough votes. The accused lives.\n");
+	  }
+	  else {
+	    sendAll("The verdict is guilty. The accused shall be executed.\n");
+	    dead[newNom] = 1;
+	  }
+	  timeStart = time(NULL);
 	}
       }
 
-      if (daytimeRemaining % 5 = 0) sendAll("Daytime remaining: %d\n", daytimeRemaining);
+      if ((daytimeRemaining - timeElapsed) % 5 = 0) sendAll("Daytime remaining: %d\n", daytimeRemaining);
   
       //DAY ENDS
-      if (timer == 0) {
+      if (timeElapsed >= daytimeRemaining) {
 	sendAll("Daytime has ended. Go to sleep.\n");
 	day = 0;
 	night = 1;
@@ -155,7 +183,7 @@ int randInt(){
 
 //3 votes triggers execution panel
 int nomineeListen(){
-  char * nominated = receiveVote();
+  char * nominated = receiveVote(); //gets received vote. receiveVote checks alive or dead...whether to approve or veto.
   if (nominated != NULL) {//turn the name to an id.
     //strcasestr(nominated, "vote");//string is sanitized in receiveVote();
     //s = strsep(&s, "\n")
