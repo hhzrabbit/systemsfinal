@@ -18,3 +18,6 @@ Skeleton of day/night cycle written
 End Game completed
 
 ===========================
+
+haleyZ -- 2017-01-17 11:00
+working on client.c so that there are two concurrent processes, the chat & the game client. The chat fgets user input, the game client interacts w/ server. Game client & chat talk via a shm. Finished the forking and general structure. WIP shm/semctrl
