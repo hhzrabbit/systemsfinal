@@ -8,52 +8,7 @@
 #include <sys/sem.h>
 
 #include "networking.h"
-
-union semun {
-  int val;
-  struct semid_ds *buf;
-  unsigned short *array;
-  struct seminfo *__buf;
-};
-
-int setupShm(){
-  int key, shmid;
-  int * shm;
-
-  key = ftok("README.md", getpid());
-
-  //make shm
-  shmid = shmget(key, 4, IPC_CREAT | 0644);
-  printf("shared memory created, id %d\n", shmid);
-
-  //clear out shm
-  shm = shmat(shmid, 0, 0);
-  * shm = 0;
-  
-  printf("shared memory value set: %d\n", * shm);
-
-  return shmid;
-}
-
-int setupSem(){
-  int key, semid, sc;
-  union semun su;
-
-  key = ftok("README.md", getpid());
-
-  //make sem
-  semid = semget(key, 1, IPC_CREAT | 0644);
-  printf("semaphore created, id %d\n", semid);
-
-
-  //set sem value
-  su.val = 1;
-  sc = semctl(semid, 0, SETVAL, su);
-  printf("semaphore value set: %d\n", sc);
-
-  return semid;
-}
-
+#include "memctl.h" //functions dealing with shm and semaphore
 
 int main( int argc, char *argv[] ) {
   int shmid, semid;

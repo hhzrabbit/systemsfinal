@@ -21,3 +21,10 @@ End Game completed
 
 haleyZ -- 2017-01-17 11:00
 working on client.c so that there are two concurrent processes, the chat & the game client. The chat fgets user input, the game client interacts w/ server. Game client & chat talk via a shm. Finished the forking and general structure. WIP shm/semctrl
+
+===========================
+
+haleyZ -- 2017-01-17 12:16
+wrote up some sem functions, separated the sem/shm stuff into its own .c and .h
+
+===========================

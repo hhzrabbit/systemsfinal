@@ -3,8 +3,8 @@ all: server client
 server: server.o networking.o
 	gcc -o server server.o networking.o
 
-client: client.o networking.o
-	gcc -o client client.o networking.o
+client: client.o networking.o memctl.o
+	gcc -o client client.o networking.o memctl.o
 
 server.o: server.c networking.h
 	gcc -c server.c
@@ -14,6 +14,9 @@ client.o: client.c networking.h
 
 networking.o: networking.c networking.h
 	gcc -c networking.c
+
+memctl.o: memctl.c memctl.h
+	gcc -c memctl.c
 
 clean:
 	rm *.o
