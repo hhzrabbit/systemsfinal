@@ -8,6 +8,11 @@ union semun {
   struct seminfo *__buf;
 };
 
+struct sockpair {
+  int chat;
+  int listener;
+};
+
 int setupShm();
 int setupSem();
 void semup();
