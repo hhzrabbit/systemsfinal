@@ -28,3 +28,7 @@ haleyZ -- 2017-01-17 12:16
 wrote up some sem functions, separated the sem/shm stuff into its own .c and .h
 
 ===========================
+
+williamX -- 2017-01-18 03:38
+* back at it again
+* started dev of clientside chat process to send to subserver
