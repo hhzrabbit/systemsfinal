@@ -10,9 +10,6 @@
 
 #DEFINE PLAYERCOUNT 8
 int main() {
-  int sd = socket(AF_INET, SOCK_STREAM, 0);
-  struct sockaddr_in in = 3;
-  bind(sd, f);
 
 
   //per connection, assign ID. Each player is running a client.
@@ -59,39 +56,63 @@ int main() {
 
       //all information passes through server.
       //read SHMs
-      chatListen();
-      
-      int newNom = nomineeListen();
-      
-      if (newNom != -1) {
-	sendAll("%s has been nominated.", idToName(newNom));
-	*(playerNoms + newNom) += 1;
-	if (* (playerNoms + newNom) == 3){
-	  //vote triggered
-	  votePrompt(newNom);
-	  daytimeRemaining -= timeElapsed;
-	  int voteStart = time(NULL);
-	  sendAll("Vote begins. Minimum 4 votes to execute. 30 seconds\n");
-	  int yesVotes = 0;
-	  int noVotes = 0;
-	  while (time(NULL) - voteStart < 30){
-	    //read SHMs
+      for (n = 0; n < PLAYERCOUNT; n++){
+	char * msg = readMsg(n);
+	char token[256];
+	while ((token = strsep(msg, '%'))){ 
+	  if (token[0] = '\\'){//is actually just a \ indicating command
+	    //find command
+	    char cmd[256];
+	    cmd = strsep(token, ' ');
+	    if (!strcmp(cmd, "\w")){
+	      //nice
+	    }
+	    else if (!strcmp(cmd, '\nom')){
+	      //nicer
+	      //token is new nom;
+	      int newNom;
+	      if (isValid(token)) newNom = NameToID(token);
+	      if (newNom != -1) {
+		sendAll("%s has been nominated.", idToName(newNom));
+		*(playerNoms + newNom) += 1;
+		if (* (playerNoms + newNom) == 3){
+		  //vote triggered
+		  votePrompt(newNom);
+		  daytimeRemaining -= timeElapsed;
+		  int voteStart = time(NULL);
+		  sendAll("Vote begins. Minimum 4 votes to execute. 30 seconds\n");
+		  int yesVotes = 0;
+		  int noVotes = 0;
+		  while (time(NULL) - voteStart < 30){
+		    //read SHMs
 	    
-	  }
+		  }
 
-	  if (yesVotes < noVotes){
-	    sendAll("The verdict is innocent. The accused lives.\n");
+		  if (yesVotes < noVotes){
+		    sendAll("The verdict is innocent. The accused lives.\n");
+		  }
+		  else if (yesVotes == noVotes){
+		    sendAll("Tied vote. The accused lives.\n");
+		  }
+		  else if (yesVotes < 4){
+		    sendAll("Not enough votes. The accused lives.\n");
+		  }
+		  else {
+		    sendAll("The verdict is guilty. The accused shall be executed.\n");
+		    dead[newNom] = 1;
+		  }
+
+		}
+		else {
+	      
+		}
+	      }
+	      else {//completely normal chat string
+		sendAll(token); //needs to be processed
+	      }
+	    }
 	  }
-	  else if (yesVotes == noVotes){
-	    sendAll("Tied vote. The accused lives.\n");
-	  }
-	  else if (yesVotes < 4){
-	    sendAll("Not enough votes. The accused lives.\n");
-	  }
-	  else {
-	    sendAll("The verdict is guilty. The accused shall be executed.\n");
-	    dead[newNom] = 1;
-	  }
+      
 	  timeStart = time(NULL);
 	}
       }
