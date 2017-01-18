@@ -11,6 +11,7 @@ union semun {
 struct sockpair {
   int chat;
   int listener;
+  int shm;
 };
 
 int setupShm();
