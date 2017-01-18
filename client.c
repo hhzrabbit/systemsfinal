@@ -11,14 +11,21 @@
 #include "memctl.h" //functions dealing with shm and semaphore
 
 int main( int argc, char *argv[] ) {
-  int shmid, semid;
 
-  shmid = setupShm(); //creates shm for chat & game client to use
-  semid = setupSem(); //creates sem to control shm
-  
   int f = fork(); //split into chat & game client
 
-  if (f == 0) { //child process - chat
+  if (f == 0) { //child process - chat, LISTENS TO USER, SENDS MSGS TO SERVER FOR PROCESSING
+    char *host;
+    if (argc != 2 ) {
+      printf("host not specified, conneting to 127.0.0.1\n");
+      host = "127.0.0.1";
+    }
+    else host = argv[1];
+    
+    int sd;
+    
+    sd = client_connect( host );
+
     char buffer[MESSAGE_BUFFER_SIZE];
   
     while (1) {
@@ -27,12 +34,14 @@ int main( int argc, char *argv[] ) {
       fgets( buffer, sizeof(buffer), stdin ); //block here
       char *p = strchr(buffer, '\n');
       *p = 0;
-
-      //process chat input
-      printf("%s\n", buffer);
+      
+      //talk to the server
+      write( sd, buffer, sizeof(buffer) );
+      read( sd, buffer, sizeof(buffer) );
+      printf( "received: %s\n", buffer );
     }
   }
-  else { //parent process - game client
+  else { //parent process - ONLY LISTENING TO SERVER INSTRUCTIONS
     char *host;
     if (argc != 2 ) {
       printf("host not specified, conneting to 127.0.0.1\n");
@@ -41,19 +50,15 @@ int main( int argc, char *argv[] ) {
     else host = argv[1];
   
     int sd;
+    char buffer[MESSAGE_BUFFER_SIZE];
 
     sd = client_connect( host );
     
     while (1){ 
-
-      //check the shm
-      //process the shm's contents as necessary
-    
-
-      //talk to the server
-      /* write( sd, buffer, sizeof(buffer) ); */
-      /* read( sd, buffer, sizeof(buffer) ); */
-      /* printf( "received: %s\n", buffer ); */
+      //LISTEN TO THE SERVER FOR MESSAGES
+     
+      read( sd, buffer, sizeof(buffer) ); 
+      printf( "received: %s\n", buffer ); 
 
 
     }
