@@ -54,13 +54,17 @@ int main() {
       sendAll("It is currently day %d\n", phaseCtr);
       sendAll("Discussion begins.\n");
       
-      //timer
+      //timer 
       int timeElapsed = (time(NULL) - timeStart);
 
       //all information passes through server.
+      //read SHMs
+      chatListen();
+      
       int newNom = nomineeListen();
-  
+      
       if (newNom != -1) {
+	sendAll("%s has been nominated.", idToName(newNom));
 	*(playerNoms + newNom) += 1;
 	if (* (playerNoms + newNom) == 3){
 	  //vote triggered
@@ -71,7 +75,7 @@ int main() {
 	  int yesVotes = 0;
 	  int noVotes = 0;
 	  while (time(NULL) - voteStart < 30){
-	    
+	    //read SHMs
 	    
 	  }
 
