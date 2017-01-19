@@ -25,7 +25,7 @@ int main( int argc, char *argv[] ) {
     int sd;
     
     sd = client_connect( host );
-
+    
     char buffer[MESSAGE_BUFFER_SIZE];
   
     while (1) {

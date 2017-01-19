@@ -22,7 +22,7 @@ int main() {
   while (current_players < MAX_PLAYERS) { 
     chat_connection = server_connect( sd );
     listener_connection = server_connect( sd );
-
+    
     struct sockpair sp;
     sp.chat = chat_connection;
     sp.listener = listener_connection;
@@ -30,8 +30,11 @@ int main() {
 
     players[current_players] = sp;
     current_players++;
+    printf("number of players in game: %d\n", current_players);
   }
-
+  printf("enough players\n");
+  close(sd);
+  
   int i;
   for (i = 0; i < current_players; i++){
     struct sockpair player = players[i];
@@ -48,8 +51,11 @@ int main() {
     }
   }
 
+
+  
   //main server check shared memory in a loop
   while (1){
+    
     //CHECK SHM OF EACH PLAYER
     //TALK TO LISTENER OF EACH PLAYER
 

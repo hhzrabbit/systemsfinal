@@ -65,6 +65,10 @@ int client_connect( char *host ) {
   
   printf("[client] connecting to: %s\n", host );
   i = connect( sd, (struct sockaddr *)&sock, sizeof(sock) );
+  if (i == -1){
+    printf("Sorry, game is full. Please try again later.\n");
+    exit(1);
+  }
   error_check( i, "client connect");
   
   return sd;
