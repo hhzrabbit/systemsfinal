@@ -8,11 +8,16 @@
 
 #include "memctl.h"
 
+int getRandom(){
+  srand(time(NULL));
+  return rand();
+}
+
 int setupShm(){
   int shmid;
   int * shm;
 
-  key = ftok("README.md", getpid());
+  key = ftok("README.md", getRandom());
 
   //make shm
   shmid = shmget(key, 4, IPC_CREAT | 0644);
@@ -31,7 +36,7 @@ int setupSem(){
   int semid, sc;
   union semun su;
 
-  key = ftok("README.md", getpid());
+  key = ftok("README.md", getRandom());
 
   //make sem
   semid = semget(key, 1, IPC_CREAT | 0644);

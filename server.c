@@ -27,6 +27,7 @@ int main() {
     sp.chat = chat_connection;
     sp.listener = listener_connection;
     sp.shm = setupShm();
+    sp.sem = setupSem();
 
     players[current_players] = sp;
     current_players++;
@@ -58,6 +59,13 @@ int main() {
     
     //CHECK SHM OF EACH PLAYER
     //TALK TO LISTENER OF EACH PLAYER
+    //for each i in the players[]:
+    // semdown( players[i].sem );
+    // read the shm data
+    // players[i].shm
+    // clear the shm
+    // do what u need to do with the data u read
+    // semup ( players[i].sem );
 
   }
   
