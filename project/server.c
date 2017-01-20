@@ -41,95 +41,137 @@ int main() {
   day = 1;
   night = 0;
   //day/night cycle
-  int phaseCtr = 1;
+  int dayCtr = 1;
+  int phase = 1;
   while(1){
     
-    int timeStart = time(NULL); //this needs to account for voting timeouts (fork?)
+    int dayStart = time(NULL); //this needs to account for voting timeouts (fork?)
     int * playerNoms = (int *)calloc(n, sizeof(int)); //also initialize outside please
-    int daytimeRemaining = 30;
-    while (day){
-      sendAll("It is currently day %d\n", phaseCtr);
-      sendAll("Discussion begins.\n");
-      
-      //timer 
-      int timeElapsed = (time(NULL) - timeStart);
+    int phaseTimeRemaining = 30;
+    int voteStart;
+    int yesVotes;
+    int noVotes;
+    int curTime;
+    char * msg;
+    char msgs[PLAYERCOUNT][256]; //8 thing array
+    int votes[2]; //yes no votes
+    
+    while (phase == 1 || phase == 2){ //day normal / day voting
 
-      //all information passes through server.
-      //read SHMs
+      //update msgs
       for (n = 0; n < PLAYERCOUNT; n++){
-	char * msg = readMsg(n);
-	char token[256];
-	while ((token = strsep(msg, '%'))){ 
-	  if (token[0] = '\\'){//is actually just a \ indicating command
-	    //find command
-	    char cmd[256];
-	    cmd = strsep(token, ' ');
-	    if (!strcmp(cmd, "\w")){
-	      //nice
-	    }
-	    else if (!strcmp(cmd, '\nom')){
-	      //nicer
-	      //token is new nom;
-	      int newNom;
-	      if (isValid(token)) newNom = NameToID(token);
-	      if (newNom != -1) {
-		sendAll("%s has been nominated.", idToName(newNom));
-		*(playerNoms + newNom) += 1;
-		if (* (playerNoms + newNom) == 3){
-		  //vote triggered
-		  votePrompt(newNom);
-		  daytimeRemaining -= timeElapsed;
-		  int voteStart = time(NULL);
-		  sendAll("Vote begins. Minimum 4 votes to execute. 30 seconds\n");
-		  int yesVotes = 0;
-		  int noVotes = 0;
-		  while (time(NULL) - voteStart < 30){
-		    //read SHMs
-	    
-		  }
+	strcpy(msgs[n], readMsg(n));
+      }
+      
+      if (phase == 1){
+	sendAll("It is currently day %d\n", dayCtr);
+	sendAll("Discussion begins.\n");
+      
+	//timer 
+	int timeElapsed = (time(NULL) - timeStart);
 
-		  if (yesVotes < noVotes){
-		    sendAll("The verdict is innocent. The accused lives.\n");
-		  }
-		  else if (yesVotes == noVotes){
-		    sendAll("Tied vote. The accused lives.\n");
-		  }
-		  else if (yesVotes < 4){
-		    sendAll("Not enough votes. The accused lives.\n");
+	//all information passes through server.
+	//read SHMs
+	for (n = 0; n < PLAYERCOUNT; n++){
+	  
+	  strcpy(msg, msgs[n]);
+	  if (strlen(msg) == 0){
+	    continue;
+	  }
+	  if (msg[0] = '\\'){//is actually just a \ indicating command
+	      //find command
+	      char cmd[256];
+	      cmd = strsep(token, ' ');
+	      if (!strcmp(cmd, "\w")){
+		//nice
+	      }
+	      else if (!strcmp(cmd, '\nom')){
+		//nicer
+		//token is new nom;
+		int newNom;
+		if (isValid(token)) newNom = NameToID(token);
+		if (newNom != -1) {
+		  sendAll("%s has been nominated.", idToName(newNom));
+		  *(playerNoms + newNom) += 1;
+		  if (* (playerNoms + newNom) == 3){
+		    //vote triggered
+		    votePrompt(newNom);
+		    daytimeRemaining -= timeElapsed;
+		    voteStart = time(NULL);
+		    sendAll("Vote begins. Minimum 4 votes to execute. 30 seconds\n");
+		    yesVotes = 0;
+		    noVotes = 0;
+		    phase = 2;
+		    memset(votes, 0, 8);
 		  }
 		  else {
-		    sendAll("The verdict is guilty. The accused shall be executed.\n");
-		    dead[newNom] = 1;
-		  }
-
-		}
-		else {
 	      
+		  }
 		}
-	      }
-	      else {//completely normal chat string
-		sendAll(token); //needs to be processed
+		else {//completely normal chat string
+		  sendAll(token); //needs to be processed
+		}
 	      }
 	    }
-	  }
       
-	  timeStart = time(NULL);
+	    timeStart = time(NULL);
+	  }
+	}
+
+	if ((daytimeRemaining - timeElapsed) % 5 = 0) sendAll("Daytime remaining: %d", daytimeRemaining);
+  
+	//DAY ENDS
+	if (timeElapsed >= daytimeRemaining) {
+	  sendAll("Daytime has ended. Go to sleep.");
+	  phase = 3;
+	  free(playerNoms);
 	}
       }
+      
+      else { //voting
 
-      if ((daytimeRemaining - timeElapsed) % 5 = 0) sendAll("Daytime remaining: %d\n", daytimeRemaining);
-  
-      //DAY ENDS
-      if (timeElapsed >= daytimeRemaining) {
-	sendAll("Daytime has ended. Go to sleep.\n");
-	day = 0;
-	night = 1;
-	free(playerNoms);
+	for (n = 0; n < PLAYERCOUNT; n++){
+	  
+	  strcpy(msg, msgs[n]);
+	  if (strlen(msg) == 0){
+	    continue;
+	  }
+	  if (!strcmp(msg, "y")){
+	    sendAll("%s has voted for execution.", idToName(n));
+	    votes[0]++;
+	  }
+	  else if (!strcmp(msg, "n")){
+	    sendAll("%s has voted against execution.", idToName(n));
+	    votes[1]++;
+	  }
+	  
+	}
+	curTime = time(NULL);
+	
+
+	
+	if (curTime - voteStart >= 30){
+	  phase = 1;
+	  dayStart = curTime;
+	  
+	  if (votes[0] < votes[1]){
+	    sendAll("The verdict is innocent. The accused lives.\n");
+	  }
+	  else if (votes[0] == votes[1]){
+	    sendAll("Tied vote. The accused lives.\n");
+	  }
+	  else if (votes[0] < 4){
+	    sendAll("Not enough votes. The accused lives.\n");
+	  }
+	  else {
+	    sendAll("The verdict is guilty. The accused shall be executed.\n");
+	    dead[newNom] = 1;
+	  }
+	}
       }
     }
-
-    while (night){
-      sendAll("It is currently night %d\n", phaseCtr);
+    while (phase == 3){ //night
+      sendAll("It is currently night %d\n", dayCtr);
       //mafia prompt (maybe write a sendMafia, something)
       sendTo(roles[0], "Wake up, mafia. Pick a person to kill.\n");
       sendTo(roles[1], "Wake up, mafia. Pick a person to kill.\n");
@@ -153,11 +195,9 @@ int main() {
       else {
 	sendTo(roles[2], "This person is an innocent townsperson.\n");
       }
-      
-      night = 0;
-      day = 1;
+      phase = 1;
     }
-    phaseCtr++;
+    dayCtr++;
   }
   
 
