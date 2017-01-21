@@ -28,3 +28,8 @@ haleyZ -- 2017-01-17 12:16
 wrote up some sem functions, separated the sem/shm stuff into its own .c and .h
 
 ===========================
+
+joelY -- 2017-01-20 15:33
+Voting in the game worked on.
+
+===========================
