@@ -29,7 +29,30 @@ wrote up some sem functions, separated the sem/shm stuff into its own .c and .h
 
 ===========================
 
+
 joelY -- 2017-01-20 15:33
 Voting in the game worked on.
 
 ===========================
+
+williamX -- 2017-01-18 03:38
+* back at it again
+* started dev of clientside chat process to send to subserver
+
+===========================
+
+haleyZ -- 2017-01-18 11:00
+specify max amt of players and ask main server to make sockets until max players reached, then fork off a process for each player
+
+===========================
+
+haleyZ -- 2017-01-19 10:34
+refuse client connetions when max players already reached
+
+=========================== 
+
+haleyZ -- 2017-01-19 15:35
+made semaphores for each player, put that inside the struct definition. randomized the key generation for shm and sem to ensure that they are unique to each player.
+
+=========================== 
+>>>>>>> 697adbbe9d99fcd44ab5af376ad3481da6c535ab

@@ -12,7 +12,7 @@ void sub_server( int sd );
 int main() {
   int MAX_PLAYERS = 8;
   int current_players = 0;
-  struct sockpair sockpairs[] = calloc(MAX_PLAYERS, sizeof(struct sockpair));
+  struct sockpair players[MAX_PLAYERS];
   
   int sd, chat_connection, listener_connection;
 
@@ -22,22 +22,53 @@ int main() {
   while (current_players < MAX_PLAYERS) { 
     chat_connection = server_connect( sd );
     listener_connection = server_connect( sd );
-
+    
     struct sockpair sp;
     sp.chat = chat_connection;
-    sp.listener = listener.connection;
+    sp.listener = listener_connection;
+    sp.shm = setupShm();
+    sp.sem = setupSem();
 
-    sockpairs[current_players] = sp;
+    players[current_players] = sp;
     current_players++;
+    printf("number of players in game: %d\n", current_players);
+  }
+  printf("enough players\n");
+  close(sd);
+  
+  int i;
+  for (i = 0; i < current_players; i++){
+    struct sockpair player = players[i];
+    int chat = player.chat;
+    int listener = player.listener;
+    int f = fork();
+    if (f == 0){
+      close(listener);
+      char buffer[MESSAGE_BUFFER_SIZE];
+      while (read( chat, buffer, sizeof(buffer) )) {
+	//put stuff into shm
+
+      }
+    }
+  }
+
+
+  
+  //main server check shared memory in a loop
+  while (1){
+    
+    //CHECK SHM OF EACH PLAYER
+    //TALK TO LISTENER OF EACH PLAYER
+    //for each i in the players[]:
+    // semdown( players[i].sem );
+    // read the shm data
+    // players[i].shm
+    // clear the shm
+    // do what u need to do with the data u read
+    // semup ( players[i].sem );
 
   }
   
-  while (1) {
-
-
-  }
-
-  free(sockpairs);
   return 0;
 }
 

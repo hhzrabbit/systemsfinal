@@ -11,12 +11,15 @@ union semun {
 struct sockpair {
   int chat;
   int listener;
+  int shm;
+  int sem;
 };
 
 int setupShm();
 int setupSem();
 void semup();
 void semdown();
+int getRandom();
 
 int key;
 
