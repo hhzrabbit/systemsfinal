@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <string.h>
 #include <sys/shm.h>
 #include <sys/ipc.h>
 #include <sys/types.h>
@@ -16,19 +16,20 @@ int getRandom(){
 
 int setupShm(){
   int shmid;
-  char ** shm;
+  char * shm;
 
   key = ftok("makefile", getRandom());
 
   //make shm
-  shmid = shmget(key, 4, IPC_CREAT | 0644);
+  shmid = shmget(key, 100 * 255 * sizeof(char), IPC_CREAT | 0644); //size for 10 msgs
   printf("shared memory created, id %d\n", shmid);
 
   //clear out shm
-  shm = shmat(shmid, 0, 0);
-  *shm = "";
+  shm = (char *) shmat(shmid, 0, 0);
+  char empty_str[] = "";
+  shm = strcpy(shm, empty_str);
   
-  printf("shared memory value set: %s\n", * shm);
+  printf("shared memory value set: %s\n", shm);
 
   return shmid;
 }

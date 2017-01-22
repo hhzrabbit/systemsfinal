@@ -17,12 +17,15 @@ void error_check( int i, char *s ) {
   }
 }
 
-int server_setup() {
-  
+int server_setup() {  
   int sd;
   int i;
   
   sd = socket( AF_INET, SOCK_STREAM, 0 );
+
+  //necessary to reuse sock stuck in TIME_WAIT
+  int enable = 1;
+  setsockopt(sd, SOL_SOCKET, SO_REUSEADDR, &enable, sizeof(int));
   error_check( sd, "server" );
   
   struct sockaddr_in sock;

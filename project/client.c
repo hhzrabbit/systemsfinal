@@ -5,15 +5,11 @@
 
 #include "networking.h"
 
-struct socket {
-  int writeEnd; //sd to server (chat)
-  int readEnd; //sd from server
-};
+
+int server_sock; //server socket id
+
 
 int main( int argc, char *argv[] ) {
-
-  struct socket me;
-  
   char *host;
   if (argc != 2 ) {
     printf("host not specified, conneting to 127.0.0.1\n");
@@ -23,14 +19,14 @@ int main( int argc, char *argv[] ) {
     host = argv[1];
   
   //order matters here bc server connects to chat first
-  me.writeEnd = client_connect( host );
-  me.readEnd = client_connect( host );
+  server_sock = client_connect( host );
 
   printf("%s\n", "Please wait while people join the game...");
   
   char buffer[MESSAGE_BUFFER_SIZE];
-  while ( read(me.readEnd, buffer, sizeof(buffer)) ) {
+  while ( read(server_sock, buffer, sizeof(buffer)) ) {
     if ( ! strcmp(buffer, "***BEGIN***") ) {
+      printf("%s\n", buffer);
       break;
     }
   }
@@ -38,20 +34,18 @@ int main( int argc, char *argv[] ) {
   
   int f = fork();
   if (f == 0) { //this is the main client (child)
-    close(me.writeEnd);
     char buffer[MESSAGE_BUFFER_SIZE];
-    while ( read(me.readEnd, buffer, sizeof(buffer)) ) {
+    while ( read(server_sock, buffer, sizeof(buffer) ) ) {
       printf("%s", buffer); //message should have \n already
     }
   }
 
   
   //this is the chat that sends to server
-  close(me.readEnd);
   while (1) {
     printf("enter message: ");
     fgets( buffer, sizeof(buffer), stdin );
-    write (me.writeEnd, buffer, sizeof(buffer) );
+    write (server_sock, buffer, sizeof(buffer) );
   }
   
 }

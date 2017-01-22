@@ -64,3 +64,11 @@ williamX -- 2017-01-20 15:36
 williamX -- 2017-01-22 1:48
 * finished up clientside work
 * may need to move to a seperate port for chat/listening
+
+===========================
+
+williamX -- 2017-01-22 12:38
+* added sighandlers to handle server quit to remove shm/sem
+* finished ncurses chat client, will integrate with client.c soon
+
+===========================
