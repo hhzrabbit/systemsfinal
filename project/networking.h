@@ -1,7 +1,7 @@
 #ifndef NETWORKING_H
 #define NETWORKING_H
 
-#define MESSAGE_BUFFER_SIZE 1000
+#define MESSAGE_BUFFER_SIZE 255
 
 void error_check( int i, char *s );
 

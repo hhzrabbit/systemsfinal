@@ -1,4 +1,4 @@
-x#include <stdio.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -8,18 +8,26 @@ x#include <stdio.h>
 void process( char * s );
 void sub_server( int sd );
 
+struct message { char * content; char wasRead; };
+
+
+
 int main() {
 
   int sd, connection;
+
   sd = server_setup();
     
   while (1) {
+
     connection = server_connect( sd );
 
     int f = fork();
     if ( f == 0 ) {
+
       close(sd);
       sub_server( connection );
+
       exit(0);
     }
     else {
@@ -31,24 +39,22 @@ int main() {
 
 
 void sub_server( int sd ) {
-  char buffer[MESSAGE_BUFFER_SIZE];
+
+  struct message * buffer;
+  buffer = (struct message *) malloc ( sizeof(struct message) );
   while (read( sd, buffer, sizeof(buffer) )) {
-    printf("[SERVER %d] received: %s\n", getpid(), buffer );
-    process( buffer );
-    write( sd, buffer, sizeof(buffer));    
-  }  
+
+    printf("[SERVER %d] received: %s\n", getpid(), buffer->content );
+    //process( buffer );
+    //write( sd, buffer, sizeof(buffer));    
+  }
+  
 }
 
-void process( char * msg ) {
-  if (msg[0] == '/') {
-    char ** command;
-    int i = 0;
-    s = msg;
-    //    while (msg[i] = strsep(&s, " ") {
-	
+void process( char * s ) {
 
-    
-
+  while ( *s ) {
+    *s = (*s - 'a' + 13) % 26 + 'a';
+    s++;
   }
-
 }

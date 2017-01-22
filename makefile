@@ -1,23 +1,11 @@
-all: server client
+all: client server
 
-server: server.o networking.o memctl.o
-	gcc -o server server.o networking.o memctl.o
+client: chat_client.c networking.c
+	gcc chat_client.c networking.c -o client.out
 
-client: client.o networking.o memctl.o
-	gcc -o client client.o networking.o memctl.o
-
-server.o: server.c networking.h
-	gcc -c server.c 
-
-client.o: client.c networking.h
-	gcc -c client.c
-
-networking.o: networking.c networking.h
-	gcc -c networking.c
-
-memctl.o: memctl.c memctl.h
-	gcc -c memctl.c
+server: chat_server.c networking.c
+	gcc chat_server.c networking.c -o server.out
 
 clean:
-	rm -f *.o
+	rm -f *.out
 	rm -f *~

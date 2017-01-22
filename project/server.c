@@ -11,7 +11,6 @@
 #DEFINE PLAYERCOUNT 8
 int main() {
 
-
   //per connection, assign ID. Each player is running a client.
   sendAll("<Player> has joined the game!\n");
   /* main gameplay */
