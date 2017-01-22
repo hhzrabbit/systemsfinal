@@ -61,3 +61,6 @@ williamX -- 2017-01-20 15:36
 
 =========================== 
 
+williamX -- 2017-01-22 1:48
+* finished up clientside work
+* may need to move to a seperate port for chat/listening

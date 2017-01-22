@@ -12,7 +12,7 @@
 void error_check( int i, char *s ) {
   if ( i < 0 ) {
     printf("%d\n", i);
-    printf("[%s] socket error %d: %s\n", s, errno, strerror(errno) );
+    printf("[%s] error %d: %s\n", s, errno, strerror(errno) );
     exit(1);
   }
 }
