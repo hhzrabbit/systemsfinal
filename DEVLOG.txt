@@ -72,3 +72,8 @@ williamX -- 2017-01-22 12:38
 * finished ncurses chat client, will integrate with client.c soon
 
 ===========================
+
+joelY -- 2017-01-22 19:47
+Merged main methods, set up control flow for game.
+
+===========================
