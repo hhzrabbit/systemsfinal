@@ -29,14 +29,6 @@ union semun {                   /* Used in calls to semctl() */
 
 #endif
 
-
-struct sockpair {
-  int chat;
-  int listener;
-  int shm;
-  int sem;
-};
-
 int setupShm();
 int setupSem();
 void semup();
