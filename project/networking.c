@@ -11,8 +11,8 @@
 
 void error_check( int i, char *s ) {
   if ( i < 0 ) {
-    printf("%d\n", i);
-    printf("[%s] error %d: %s\n", s, errno, strerror(errno) );
+    //printf("%d\n", i);
+    //printf("[%s] error %d: %s\n", s, errno, strerror(errno) );
     exit(1);
   }
 }
@@ -66,7 +66,7 @@ int client_connect( char *host ) {
   inet_aton( host, &(sock.sin_addr));
   sock.sin_port = htons(9001);
   
-  printf("[client] connecting to: %s\n", host );
+  //printf("[client] connecting to: %s\n", host );
   i = connect( sd, (struct sockaddr *)&sock, sizeof(sock) );
   error_check( i, "client");
   

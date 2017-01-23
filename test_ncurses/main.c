@@ -10,6 +10,8 @@ int main() {
 
   int max_y, max_x;
   getmaxyx( stdscr, max_y, max_x );
+  //  printw("max_y: %d", max_y);
+  //printw("max_x: %d", max_x);
 
   //newwin( height, width, start_y, start_x );
   WINDOW * display = newwin(max_y - 3, max_x, 0, 0); 
@@ -56,7 +58,9 @@ int main() {
 
   }
 
-  
+
+  getch();
+  endwin();
   
   return 0;
 }

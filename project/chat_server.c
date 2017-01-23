@@ -1,3 +1,5 @@
+//NEED TO FREE MEMORY REMIND ME
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -36,8 +38,11 @@ void sendAll(char * message) {
 
 //helper to send a message to specific player
 void sendTo(int playerID, char * message) {
-  printf("sending to [%d]: %s\n", playerID, message);
   struct sockpair player = players[playerID];
+  char * header = (char *)malloc(MESSAGE_BUFFER_SIZE);
+  sprintf(header, "<Player %d> ", playerID);
+  message = strcat(header, message);
+  printf("sending to [%d]: \"%s\"\n", playerID, message);
   write(player.sock_id, message, strlen(message));
 }
 
@@ -51,6 +56,7 @@ static void sighandler(int signo) {
       semctl(player.sem_id, 0, IPC_RMID, 0);
       close(player.sock_id);
     }
+    printf("%s\n", "did an error");
     exit(0);
   }
 }
@@ -94,25 +100,21 @@ int main() {
       char beginCode[] = "***BEGIN***";
       write(sock_id, beginCode, sizeof(beginCode));
       char buffer[MESSAGE_BUFFER_SIZE];
-      sprintf(buffer, "<Player %d> -- ", i);
       
-      while (read( sock_id, buffer, sizeof(buffer) )) {
+      while (read( sock_id, buffer, MESSAGE_BUFFER_SIZE )) {
+	
 	printf("Received from player %d: %s\n", i, buffer);
 	//put stuff into shm
 	semdown(player.sem_id);
 	char * shm = (char *) shmat(player.shm_id, 0, 0);
 	//messages are seperated by newline
-	
-	//	printf("Current shm: [%s]\n", shm);
-	//	printf("adding buffer: [%s]\n", buffer);
       	shm = strcat(shm, buffer);
-	
 	//	printf("updated shm: %s\n", shm);
 	shmdt(shm);
 	semup(player.sem_id);
       }
     }
-  }
+  } //END SUBSERVER
   
   //main server check shared memory in a loop
   //when one person types msg, sends to everyone
@@ -131,7 +133,7 @@ int main() {
       shmdt(shm);
       semup(player.sem_id);
     }
-    sleep(1);
+    sleep(5);
   }
   
   return 0;

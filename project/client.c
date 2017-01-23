@@ -35,7 +35,7 @@ int main( int argc, char *argv[] ) {
   int f = fork();
   if (f == 0) { //this is the main client (child)
     char buffer[MESSAGE_BUFFER_SIZE];
-    while ( read(server_sock, buffer, sizeof(buffer) ) ) {
+    while ( read(server_sock, buffer, sizeof(buffer) ) {
       printf("%s", buffer); //message should have \n already
     }
   }
