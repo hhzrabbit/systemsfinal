@@ -22,10 +22,9 @@ struct sockpair {
 void sendAll( char * message );
 void sendTo( int playerID, char * message );
 static void sighandler(int signo);
-int nameToID(char * name);
-char * IDToName(int id);
+int nameToID(char * name, char * names[]);
+char * IDToName(int id, char * names[]);
 int randInt();
-void votePrompt(int pid);
 
 //GLOBAL VARIABLES
 int current_players = 0;
@@ -60,13 +59,6 @@ static void sighandler(int signo) {
   }
 }
 
-//for now, presume everyone votes (eventually add timer)
-void votePrompt(int pid){
-  char * server_msg;
-  sprintf(server_msg, "%s has been accused! Should they be executed? (yes/no)\n", IDToName(pid));
-  sendAll(server_msg);
-}
-
 
 int randInt(){
   
@@ -87,24 +79,24 @@ int randInt(){
 /*
 //3 votes triggers execution panel
 int nomineeListen(){
-  char * nominated = receiveVote(); //gets received vote. receiveVote checks alive or dead...whether to approve or veto.
-  if (nominated != NULL) {//turn the name to an id.
-    //strcasestr(nominated, "vote");//string is sanitized in receiveVote();
-    //s = strsep(&s, "\n")
-    return nameToID(nominated);
-  }
-  return -1;
+char * nominated = receiveVote(); //gets received vote. receiveVote checks alive or dead...whether to approve or veto.
+if (nominated != NULL) {//turn the name to an id.
+//strcasestr(nominated, "vote");//string is sanitized in receiveVote();
+//s = strsep(&s, "\n")
+return nameToID(nominated);
+}
+return -1;
 }
 */
 int nameToID(char * name, char * names[]){
   int n = 0;
   for (n = 0; n < PLAYERCOUNT; n++){
-    if (!strcmp(name, names[n])
-	return n;
+    if (!strcmp(name, names[n]))
+      return n;
   }
   return -1;
 }
-
+  
 char * IDToName(int id, char * names[]){
   return names[id];
 }
@@ -162,7 +154,7 @@ int main() {
 	
 	//	printf("Current shm: [%s]\n", shm);
 	//	printf("adding buffer: [%s]\n", buffer);
-      	shm = strcat(shm, buffer);
+	shm = strcat(shm, buffer);
 	
 	//	printf("updated shm: %s\n", shm);
 	shmdt(shm);
@@ -185,7 +177,7 @@ int main() {
   for (n = 0; n < current_players; n++){//initialize
     roles[n] = n;
   }
-      //grab a random player from the list...
+  //grab a random player from the list...
   for (n = 0; n < 60; n++){//let's shake it up
     //swap rand.
     int first = randInt() % current_players;
@@ -194,10 +186,10 @@ int main() {
     roles[first] = roles[second];
     roles[second] = temp;
   }
-
-  sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!\n", IDToName(roles[1]));
+  sendAll("randomized");
+  sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!\n", IDToName(roles[1], names));
   sendTo(roles[0], server_msg);
-  sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!\n", IDToName(roles[0]));
+  sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!\n", IDToName(roles[0], names));
   sendTo(roles[1], server_msg);
   sendTo(roles[2], "You are the cop! Find out who the mafia are.\n");
   for (n = 3; n < PLAYERCOUNT; n++){
@@ -345,7 +337,9 @@ int main() {
 	      *(playerNoms + newNom) += 1;
 	      if (* (playerNoms + newNom) == 3){
 		//vote triggered
-		votePrompt(newNom);
+		sprintf(server_msg, "%s has been accused! Should they be executed? (yes/no)\n", IDToName(newNom, names));
+		sendAll(server_msg);
+		
 		daytimeRemaining -= timeElapsed;
 		timeStart = time(NULL);
 		sendAll("Vote begins. Minimum 4 votes to execute. 30 seconds\n");
@@ -457,7 +451,7 @@ int main() {
     
     //check for endgame
 
-     //end game
+    //end game
     //(exited a while loop - if sum of alive mafia members > sum of townspeople)
     if (isAlive[0] + isAlive[1] == 0){
       sendAll("Game over. The townspeople have won!\n");
