@@ -29,12 +29,6 @@ wrote up some sem functions, separated the sem/shm stuff into its own .c and .h
 
 ===========================
 
-
-joelY -- 2017-01-20 15:33
-Voting in the game worked on.
-
-===========================
-
 williamX -- 2017-01-18 03:38
 * back at it again
 * started dev of clientside chat process to send to subserver
@@ -56,6 +50,11 @@ made semaphores for each player, put that inside the struct definition. randomiz
 
 =========================== 
 
+joelY -- 2017-01-20 15:33
+Voting in the game worked on.
+
+===========================
+
 williamX -- 2017-01-20 15:36
 * finished up chat subserver
 
@@ -75,5 +74,10 @@ williamX -- 2017-01-22 12:38
 
 joelY -- 2017-01-22 19:47
 Merged main methods, set up control flow for game.
+
+===========================
+
+haleyZ -- 2017-01-22 17:53
+added requested info to the README
 
 ===========================
