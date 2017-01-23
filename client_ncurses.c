@@ -83,6 +83,10 @@ int main( int argc, char ** argv ) {
     char servMsg[MESSAGE_BUFFER_SIZE];
     while ( read(server_sock, servMsg, sizeof(servMsg) ) ) {
       displayMsg(chat, display, servMsg);
+      memset(servMsg, 0, MESSAGE_BUFFER_SIZE);
+      //free(servMsg);
+      //servMsg = (char *) calloc (sizeof(char), MESSAGE_BUFFER_SIZE);
+      
       //      mvwprintw(display, 0, 0, "%s", servMsg);
     }
   }
