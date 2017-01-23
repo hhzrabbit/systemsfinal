@@ -96,3 +96,14 @@ joelY -- 2017-01-24 14:55
 Changed string formatting
 
 ===========================
+
+joelY -- 2017-01-24 17:00
+ran through game code and fixed some theoretical bugs
+
+===========================
+
+williamX & haleyZ -- 2017-01-24 17:00
+* fixed the bug where the server would segfault after connecting all the players (char * not allocated)
+* fixed bug where the client would not receive the messages the server sends saying "A player joined the game" 
+
+===========================
