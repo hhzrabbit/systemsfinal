@@ -1,5 +1,3 @@
-//NEED TO FREE MEMORY REMIND ME
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -10,6 +8,7 @@
 #include <signal.h>
 #include <fcntl.h>
 #include <time.h>
+#include <errno.h>
 #include "networking.h"
 #include "memctl.h"
 
@@ -43,22 +42,28 @@ void sendAll(char * message) {
 }
 
 void serverAll(char * message){
-  char * msg;
-  sprintf(msg,"[SERVER] %s", message);
+  char * msg = (char *) malloc( MESSAGE_BUFFER_SIZE );
+  sprintf(msg, "[SERVER] %s", message);
+  sendAll(msg);
+  free(msg);
 }
+
 
 //helper to send a message to specific player
 void sendTo(int playerID, char * message) {
   struct sockpair player = players[playerID];
-  char * header = (char *)malloc(MESSAGE_BUFFER_SIZE);
-  //sprintf(header, "<Player %d> ", playerID);
-  //message = strcat(header, message);
   printf("sending to [%d]: \"%s\"\n", playerID, message);
-  write(player.sock_id, message, strlen(message));
+
+  
+  if (write(player.sock_id, message, strlen(message)) < 0) {
+    printf("sendTo Error: %s\n", strerror(errno));
+  }
+
+  
 }
 
 void serverTo(int playerID, char * message){
-  char * msg;
+  char * msg = (char *) malloc( MESSAGE_BUFFER_SIZE );
   sprintf(msg, "[SERVER] %s", message);
   sendTo(playerID, msg);
 }
@@ -73,7 +78,7 @@ static void sighandler(int signo) {
       semctl(player.sem_id, 0, IPC_RMID, 0);
       close(player.sock_id);
     }
-    printf("%s\n", "did an error");
+    printf("Error: %d\n", signo);
     exit(0);
   }
 }
@@ -121,7 +126,8 @@ int main() {
   sd = server_setup();
   
   //fill up the game
-  while (current_players < MAX_PLAYERS) { 
+  while (current_players < MAX_PLAYERS) {
+    printf("current players: %d\n", current_players);
     client_conn = server_connect( sd );
     
     struct sockpair sp;
@@ -129,12 +135,15 @@ int main() {
 
     sp.shm_id = setupShm();
     sp.sem_id = setupSem();
-
+    
     players[current_players] = sp;
     current_players++;
     serverAll("A player has joined the game!\n");
     printf("[SERVER] number of players in game: %d\n", current_players);
   }
+
+  
+  
   printf("[SERVER] enough players, game beginning\n");
 
   serverAll("Welcome to Mafia!");
