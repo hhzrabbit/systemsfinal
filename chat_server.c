@@ -13,8 +13,8 @@
 #include "networking.h"
 #include "memctl.h"
 
-#define MAX_PLAYERS 3
-#define PLAYERCOUNT 3
+#define MAX_PLAYERS 1
+#define PLAYERCOUNT 1
 struct sockpair {
   int sock_id;
   int shm_id;
@@ -212,7 +212,7 @@ int main() {
     }
     if (nameFlag == 1) break;
   }
-
+  /*
   
   serverAll("Now assigning roles");
   //distribute 1-playercount among 1-8
@@ -635,5 +635,6 @@ int main() {
 
   }
 
+  */
   return 0;
 }
