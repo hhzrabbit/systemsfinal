@@ -96,12 +96,17 @@ int nomineeListen(){
   return -1;
 }
 */
-int nameToID(char * name){
-  return 0;
+int nameToID(char * name, char * names[]){
+  int n = 0;
+  for (n = 0; n < PLAYERCOUNT; n++){
+    if (!strcmp(name, names[n])
+	return n;
+  }
+  return -1;
 }
 
-char * IDToName(int id){
-  return "hello";
+char * IDToName(int id, char * names[]){
+  return names[id];
 }
 
 
@@ -172,10 +177,22 @@ int main() {
   int roles[PLAYERCOUNT];
   int dead[PLAYERCOUNT]; //0 is alive, 1 is dead
   int n;
+  char * names[PLAYERCOUNT]; //idth index is name
+
+  
   sendAll("Now assigning roles");
   //distribute 1-playercount among 1-8
-  for (n = 0; n < PLAYERCOUNT; n++){//grab a random player from the list...
-    roles[n] = n + randInt() % (PLAYERCOUNT - n);
+  for (n = 0; n < current_players; n++){//initialize
+    roles[n] = n;
+  }
+      //grab a random player from the list...
+  for (n = 0; n < 60; n++){//let's shake it up
+    //swap rand.
+    int first = randInt() % current_players;
+    int second = randInt() % current_players;
+    int temp = roles[first];
+    roles[first] = roles[second];
+    roles[second] = temp;
   }
 
   sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!\n", IDToName(roles[1]));
@@ -193,7 +210,7 @@ int main() {
   int isAlive[PLAYERCOUNT];
   int numAlive = current_players;
 
-  /*
+  
 
 #define	DAYPREP 10
 #define VOTEPREP 11
@@ -238,7 +255,7 @@ int main() {
       if ( strlen(shm) ) { //if shm not empty
 	  
 	//parse the crap outta it RIGHT HER
-	strcpy(msgs[i], shm);
+	//strcpy(msgs[i], shm);
 	sendAll(shm);
 	char emptyStr[] = "";
 	shm = strcpy(shm, emptyStr);
@@ -321,9 +338,9 @@ int main() {
 	    //nicer
 	    //token is new nom;
 	    int newNom;
-	    if (msg) newNom = nameToID(msg);
+	    if (msg) newNom = nameToID(msg, names);
 	    if (newNom != -1) {
-	      sprintf(server_msg,"%s has been nominated.", IDToName(newNom));
+	      sprintf(server_msg,"%s has been nominated.", IDToName(newNom, names));
 	      sendAll(server_msg);
 	      *(playerNoms + newNom) += 1;
 	      if (* (playerNoms + newNom) == 3){
@@ -361,13 +378,13 @@ int main() {
 	  continue;
 	}
 	if (!strcmp(msg, "y")){
-	  sprintf(server_msg,"%s has voted for execution.", IDToName(n));
+	  sprintf(server_msg,"%s has voted for execution.", IDToName(n, names));
 	  sendAll(server_msg);
 	  votes[0]++;
 	}
 	else if (!strcmp(msg, "n")){
 	  
-	  sprintf(server_msg, "%s has voted against execution", IDToName(n));
+	  sprintf(server_msg, "%s has voted against execution", IDToName(n, names));
 	  sendAll(server_msg);
 	  votes[1]++;
 	}
@@ -402,18 +419,8 @@ int main() {
       break;
 
     case NIGHT:
-      ;
-      int copChoice = -1;
-      while (copChoice == -1){
-	//don't pick yourself silly...
-      }
+
       
-      if ( copChoice == roles[0] || copChoice == roles[1] ){
-	sendTo(roles[2], "This person is a member of the mafia.\n");
-      }
-      else {
-	sendTo(roles[2], "This person is an innocent townsperson.\n");
-      }
       
       break;
 
@@ -430,7 +437,19 @@ int main() {
 
     case COP:
 
-
+      msg = msgs[roles[2]]; 
+      int copChoice = nameToID(msg, names);
+      while (copChoice == -1){
+	//don't pick yourself silly...
+      }
+      
+      if ( copChoice == roles[0] || copChoice == roles[1] ){
+	sendTo(roles[2], "This person is a member of the mafia.\n");
+      }
+      else {
+	sendTo(roles[2], "This person is an innocent townsperson.\n");
+      }
+      
       phase = DAYPREP;
       break;
       
@@ -447,6 +466,7 @@ int main() {
       sendAll("Game over. (Defaulted) The mafia outnumber the townspeople, and have won!\n");
     }   
   }
-  */
+
+  
   return 0;
 }
