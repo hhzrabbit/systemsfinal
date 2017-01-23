@@ -12,8 +12,8 @@
 #include "networking.h"
 #include "memctl.h"
 
-#define MAX_PLAYERS 3
-#define PLAYERCOUNT 3
+#define MAX_PLAYERS 1
+#define PLAYERCOUNT 1
 struct sockpair {
   int sock_id;
   int shm_id;
@@ -52,13 +52,8 @@ void serverAll(char * message){
 //helper to send a message to specific player
 void sendTo(int playerID, char * message) {
   struct sockpair player = players[playerID];
-  printf("sending to [%d]: \"%s\"\n", playerID, message);
-
-  
-  if (write(player.sock_id, message, strlen(message)) < 0) {
-    printf("sendTo Error: %s\n", strerror(errno));
-  }
-
+  printf("sending to [%d]: \"%s\"\n", playerID, message); 
+  write(player.sock_id, message, strlen(message));
   
 }
 
