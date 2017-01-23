@@ -7,21 +7,37 @@ Systems Final Project | Fall 2016 | Mr. Dyrland-Weaver
 * Joel Ye (pd 10)
 * William Xiang (pd 10)
 
+### About the project
+Mafia is a multiplayer game in which a group of townspeople try to live to the end and/or fulfill their objectives. Some have special abilities to use during the night, while others can only influence the outcome of the game based on their vote in a democratic lynching process during the day. Discussion takes place in public chat, and the day ends when time runs out or a consensus to lynch is reached.
+
+### Non-standard libraries needed
+* libncurses5-dev
+* libncursesw5-dev
+
 ### To compile
-On the top level of our project directory:
+For each computer, on the top level of our project directory, run:
 ```
 $ make
 ```
 
+### To run
+One computer acts as the server. On this computer, run:
+```
+$ ./server.out
+```
+On eight other computers, run:
+```
+$ ./client.out
+```
+
 ### Files included in this project
-* server.c
 * chat_server.c
-* client.c
+* client_ncurses.c
 * networking.c
 * networking.h
 * memctl.c
 * memctl.h
 * makefile
 
-### Non-standard libraries used
-* ncurses
+### Bugs
+* If a player who is alive disconnects during the game, undefined behavior occurs
