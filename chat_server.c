@@ -13,8 +13,8 @@
 #include "networking.h"
 #include "memctl.h"
 
-#define MAX_PLAYERS 4
-#define PLAYERCOUNT 4
+#define MAX_PLAYERS 3
+#define PLAYERCOUNT 3
 struct sockpair {
   int sock_id;
   int shm_id;
@@ -130,7 +130,7 @@ int main() {
 
     players[current_players] = sp;
     current_players++;
-    sendAll("<Player> has joined the game!\n");
+    sendAll("A player has joined the game!\n");
     printf("[SERVER] number of players in game: %d\n", current_players);
   }
   printf("[SERVER] enough players, game beginning\n");
@@ -176,6 +176,40 @@ int main() {
   int dead[PLAYERCOUNT]; //0 is alive, 1 is dead
   int n;
   char * names[PLAYERCOUNT]; //idth index is name
+  int nameCheck[PLAYERCOUNT];
+  memset(nameCheck, 0, 32);
+  int nameFlag;
+  sendAll("What are your names?");
+  
+  while (1){
+    printf("Checking 0\n");
+    nameFlag = 1;
+    for (n = 0; n < current_players; n++){
+      printf("Checking namecheck %d\n", nameCheck[n]);
+      if (!nameCheck[n]){
+	nameFlag = 0;
+	struct sockpair player = players[i];
+	semdown(player.sem_id);
+	printf("Checking 1\n");
+	char * shm = (char *) shmat(player.shm_id, 0, 0);
+	printf("Checking 3\n");
+	if ( strlen(shm) ) { //if shm not empty
+	  printf("Checking -1\n");
+	  strcpy(names[n], shm);     
+	  sprintf(server_msg, "Welcome, %s.", names[n]);
+	  sendAll(server_msg);
+	  char emptyStr[] = "";
+	  shm = strcpy(shm, emptyStr);
+	}
+	printf("Checking 2\n");
+	shmdt(shm);
+	semup(player.sem_id);
+      }
+      
+    sleep(1);
+    }
+    if (nameFlag == 1) break;
+  }
 
   
   sendAll("Now assigning roles");
@@ -183,17 +217,30 @@ int main() {
   for (n = 0; n < current_players; n++){//initialize
     roles[n] = n;
   }
+  printf("done\n");
   //grab a random player from the list...
-  for (n = 0; n < 60; n++){//let's shake it up
+  for (n = 0; n < 5; n++){//let's shake it up
     //swap rand.
-    int first = randInt() % current_players;
-    int second = randInt() % current_players;
+    printf("trying to randomize\n");
+    int first = abs(randInt()) % current_players;
+    printf("first index %d", first);
+    int second = abs(randInt()) % current_players;
+    printf("second index %d", second);
     int temp = roles[first];
     roles[first] = roles[second];
     roles[second] = temp;
+    printf("first is now %d", roles[first]);
+    printf("second is now %d", roles[second]);
   }
+  printf("done2\n");
+  printf("roles[0] is %d\n", roles[0]);
+  
+  printf("roles[1] is %d\n", roles[1]);
+  
+  printf("roles[2] is %d\n", roles[2]);
   sendAll("randomized");
   sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!\n", IDToName(roles[1], names));
+  printf("was sprinting the error\n");
   sendTo(roles[0], server_msg);
   sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!\n", IDToName(roles[0], names));
   sendTo(roles[1], server_msg);
@@ -254,10 +301,13 @@ int main() {
       if ( strlen(shm) ) { //if shm not empty
 
 	//parse the crap outta it RIGHT HER
-	//strcpy(msgs[i], shm);
-	sendAll(shm);
+	if (!strlen(msgs[i]){
+	strcpy(msgs[i], shm);
+       
+	//sendAll(shm);
 	char emptyStr[] = "";
 	shm = strcpy(shm, emptyStr);
+	}
       }
       shmdt(shm);
       semup(player.sem_id);
@@ -421,36 +471,84 @@ int main() {
       
       break;
 
-    case NIGHT:
+    case NIGHT: //oops
       phase = MAFPREP;
-      
       break;
 
     case MAF:
-    
-      // listen(roles[0]);
-      //something something...
-      
+      int c1;
+      int c2;
+      while (1){
+	msg = msgs[roles[0]];
+	c1 = nameToID(msg, names);
+	msg = msgs[roles[1]];
+	c2 = nameToID(msg, names);
+	char emptyStr[] = "";
+	strcpy(msg[roles[0]], emptyStr);
+	strcpy(msg[roles[1]], emptyStr);
+	
+	int validFlag = 1;
+	if (c1 == -1 || c1 == roles[0] || c1 == roles[1]) {
+	  validFlag = 0;
+	  sendTo(roles[0], "Invalid name");
+	}
+	if (c2 == -1 || c2 == roles[0] || c2 == roles[1]) {
+	  validFlag = 0;
+	  sendTo(roles[1], "Invalid name");
+	}
+	if (validFlag){
+	  
+	  sprintf(server_msg, "Your have chosen to target %s", idToName(c1));
+	  sendTo(roles[0], server_msg);
+	  sprintf(server_msg, "Your partner has chosen to target %s", idToName(c1));
+	  sendTo(roles[0], server_msg);
+	  sprintf(server_msg, "You have chosen to target %s", idToName(c2));
+	  sendTo(roles[1], server_msg);
+	  sprintf(server_msg, "Your partner has chosen to target %s", idToName(c1));
+	  sendTo(roles[1], server_msg);
+	         
+	  if (c1 != c2){
+	    sendTo(roles[0], "You must agree on the target!\n");
+	    sendTo(roles[1], "You must agree on the target!\n");
+	  }
+	  else {
+	    break;
+	  }
+	}
+	
       sendTo(roles[0], "You have chosen to kill <person>. Go to sleep.\n");
       sendTo(roles[1], "You have chosen to kill <person>. Go to sleep.\n");
-    
-      phase = COPPREP;
+      if (isAlive[roles[2]])
+	phase = COPPREP;
+      else
+	phase = DAYPREP;
+
+      isAlive[c1] = 0; //ooh killem
+     
       break;
-
-    case COP:
-
-
-      msg = msgs[roles[2]]; 
-      int copChoice = nameToID(msg, names);
-      while (copChoice == -1){
-	//don't pick yourself silly...
       }
       
-      if ( copChoice == roles[0] || copChoice == roles[1] ){
-	sendTo(roles[2], "This person is a member of the mafia.\n");
-      }
-      else {
-	sendTo(roles[2], "This person is an innocent townsperson.\n");
+    case COP:
+
+      while (1){
+	
+	msg = msgs[roles[2]]; 
+	int copChoice = nameToID(msg, names);
+	char emptyStr[] = "";
+	strcpy(msgs[roles[2]], emptyStr);
+
+	if (copChoice == -1 || copChoice == roles[2]){
+	  sendTo(roles[2], "Invalid name");
+	}
+	else{
+	  if ( copChoice == roles[0] || copChoice == roles[1] ){
+	    sendTo(roles[2], "This person is a member of the mafia.\n");
+	  }
+	  else {
+	    sendTo(roles[2], "This person is an innocent townsperson.\n");
+	  }
+	  break;
+	}
       }
       
       phase = DAYPREP;

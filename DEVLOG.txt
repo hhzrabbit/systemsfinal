@@ -81,3 +81,8 @@ haleyZ -- 2017-01-22 17:53
 added requested info to the README
 
 ===========================
+
+joelY -- 2017-01-22 22:54
+Nighttime game flow completed.
+
+===========================
