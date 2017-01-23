@@ -91,3 +91,8 @@ joelY -- 2017-01-23 00:08
 Daytime game flow completed (no testing).
 
 ===========================
+
+joelY -- 2017-01-24 14:55
+Changed string formatting
+
+===========================
