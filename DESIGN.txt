@@ -1,0 +1,69 @@
+============================
+DW: APPROVED
+============================
+
+
+Team Prefs - William Xiang (pd 10), Joel Ye (pd 10), Haley Zeng (pd 4)
+
+IDEA: Mafia / Town of Salem (ToS: extended roles, if time permits)
+
+DESCRIPTION: 
+Gameplay: Mafia / Town of Salem is a multiplayer game in which a group of townspeople try to live to the end and/or fulfill their objectives. Some have special abilities to use during the night, while others can only influence the outcome of the game based on their vote in a democratic lynching process during the day. Discussion takes place in public chat, and the day ends when time runs out or a consensus to lynch is reached.
+
+More rules at the following links:
+Basic version: http://www.menconi.com/games/mafia.html
+Town of Salem: http://town-of-salem.wikia.com/wiki/Town_of_Salem_Wiki:Main_Page
+
+Joining mechanism: 
+Basic: Clients will connect to the server and the server will track how many players are connected. Once enough players are ready to start the game, the server will block further connections and start the game.
+
+Lobby (Tentative): To join games, new users can join and set their usernames in the lobby, chat in public and in private, and time permitting, party up with other players. They join (or spectate) games from a menu, either picking the game name (which will display number of players in the game right now), or choose to be randomly put into a game.
+
+USER INTERFACE: Terminal. Completely text-based. Users interact with designated commands and respond to in game prompts with specific choices for answers (e.g. do you vote to lynch this person? (Y/N))
+
+TECHNICAL DESIGN
+Topics used:
+Allocating memory: Creating player data dependent on number of players
+Working with files: Save the narratives for specific characters and pull when needed; need to read from /dev/urandom to decide random roles in beginning of game
+Processes (forking, exec etc.): forking -- need separate processes for chat and voting during the council meetings
+Signals: Catching EXIT signal to print a quit confirmation message
+Shared memory, semaphores: The actions of certain roles require interaction with other players; Semaphores control this make sure one person gets only one request at a time
+Networking: Players connect up to one server to be part of the same game; send essential game data from server to each player (client) participating
+
+Components and Role Delegation:
+- William
+    - Public chat during the council discussions (networking)
+- Joel
+    - Game functionality (daytime/nighttime events, voting) (file work)
+- Haley
+    - Project Manager, loosely speaking
+    - Server/Client connection, basic server to allow connections until full (process management, networking, and semaphores)
+
+Data Structures:
+Custom data struct to store player data
+- Name
+- Alive or Dead
+- Role (villager or mafia or etc.)
+
+Algorithms:
+- Client/Server Handshake to verify connection upon game start
+- Mafia forced consensus voting scheme
+
+Timeline:
+1-7 Figure out general flow of the game, procession of events, what prompts we need and when/how each should be triggered [Everyone]
+1-9 Voting [Joel]
+1-11 Networking connection between one client and a server [Haley]
+1-13 Mafia Functionality [Joel]
+1-14 Networking connection between multiple clients and a server [Haley]
+1-15 Capping number of connections to the server and triggering start of game upon reach of limit [Haley]
+1-15 Half Chat Functionality (between 2 terminal sessions) [William]
+1-16 Police Functionality [Joel]
+1-18 Mechanism to start game even if not full capacity reached [Haley]
+1-19 Doctor Functionality [Joel]
+1-19 Full Chat Functionality [William]
+Will finish project by: Project deadline (hopefully) - Presume the 19th for now.
+
+
+EXTRAS
+Will / Death Note to be stored for each player
+Private messaging

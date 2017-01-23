@@ -1,0 +1,83 @@
+Format: topherM -- 1999-12-31 23:59
+
+===========================
+
+joelY -- 2017-01-08 17:49
+Started work on voting, there are lots of unwritten functions
+
+===========================
+
+haleyZ -- 2017-01-09 11:00
+wrote out the flow of the game so we know what happens first, what follows what, etc
+
+===========================
+
+joelY -- 2017-01-10 20:29
+Role delegation completed
+Skeleton of day/night cycle written 
+End Game completed
+
+===========================
+
+haleyZ -- 2017-01-17 11:00
+working on client.c so that there are two concurrent processes, the chat & the game client. The chat fgets user input, the game client interacts w/ server. Game client & chat talk via a shm. Finished the forking and general structure. WIP shm/semctrl
+
+===========================
+
+haleyZ -- 2017-01-17 12:16
+wrote up some sem functions, separated the sem/shm stuff into its own .c and .h
+
+===========================
+
+williamX -- 2017-01-18 03:38
+* back at it again
+* started dev of clientside chat process to send to subserver
+
+===========================
+
+haleyZ -- 2017-01-18 11:00
+specify max amt of players and ask main server to make sockets until max players reached, then fork off a process for each player
+
+===========================
+
+haleyZ -- 2017-01-19 10:34
+refuse client connetions when max players already reached
+
+=========================== 
+
+haleyZ -- 2017-01-19 15:35
+made semaphores for each player, put that inside the struct definition. randomized the key generation for shm and sem to ensure that they are unique to each player.
+
+=========================== 
+
+joelY -- 2017-01-20 15:33
+Voting in the game worked on.
+
+===========================
+
+williamX -- 2017-01-20 15:36
+* finished up chat subserver
+
+=========================== 
+
+williamX -- 2017-01-22 1:48
+* finished up clientside work
+* may need to move to a seperate port for chat/listening
+
+===========================
+
+williamX -- 2017-01-22 12:38
+* added sighandlers to handle server quit to remove shm/sem
+* finished ncurses chat client, will integrate with client.c soon
+
+===========================
+
+joelY -- 2017-01-22 19:47
+Merged main methods, set up control flow for game.
+
+===========================
+
+haleyZ -- 2017-01-22 17:53
+added requested info to the README
+
+===========================
