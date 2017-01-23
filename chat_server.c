@@ -388,7 +388,7 @@ int main() {
 	char emptyStr[] = "";
 	strcpy(msgs[n], emptyStr);
 	
-	if (msg[0] = '\\'){//is actually just a \ indicating command
+	if (msg[0] == '\\'){//is actually just a \ indicating command
 	  //find command
 	  char * cmd;
 	  cmd = strsep(&msg, " ");
