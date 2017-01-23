@@ -48,7 +48,7 @@ int main( int argc, char ** argv ) {
   box(display, 0, 0);
   box(chat, 0, 0);
 
-  //  keypad(chat, true);
+  keypad(chat, true);
   wmove(chat, 1, 1); //move cursor inside chat box
 
     
@@ -71,8 +71,8 @@ int main( int argc, char ** argv ) {
   
   char buffer[MESSAGE_BUFFER_SIZE];
   while ( read(server_sock, buffer, sizeof(buffer)) ) {
+    displayMsg(chat, display, buffer);
     if ( ! strcmp(buffer, "***BEGIN***") ) {
-      displayMsg(chat, display, buffer);
       break;
     }
   }
@@ -82,9 +82,8 @@ int main( int argc, char ** argv ) {
   if (f == 0) { //this is the main client (child)
     char servMsg[MESSAGE_BUFFER_SIZE];
     while ( read(server_sock, servMsg, sizeof(servMsg) ) ) {
-      //displayMsg(chat, display, servMsg);
-      mvwprintw(display, 0, 0, "%s", servMsg);
-      wrefresh(display);
+      displayMsg(chat, display, servMsg);
+      //      mvwprintw(display, 0, 0, "%s", servMsg);
     }
   }
   
