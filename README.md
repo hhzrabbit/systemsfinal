@@ -8,7 +8,7 @@ Systems Final Project | Fall 2016 | Mr. Dyrland-Weaver
 * William Xiang (pd 10)
 
 ### About the project
-Mafia is a multiplayer game in which a group of townspeople try to live to the end and/or fulfill their objectives. Some have special abilities to use during the night, while others can only influence the outcome of the game based on their vote in a democratic lynching process during the day. Discussion takes place in public chat, and the day ends when time runs out or a consensus to lynch is reached.
+Mafia is a multiplayer game in which a group of townspeople try to live to the end and/or fulfill their objectives. Some have special abilities to use during the night, while others can only influence the outcome of the game based on their vote in a democratic lynching process during the day. Discussion takes place in public chat, and the day ends when time runs out or a consensus to lynch is reached. *Detailed gameplay information available [here](http://www.menconi.com/games/mafia.html).*
 
 ### Non-standard libraries needed
 * libncurses5-dev
