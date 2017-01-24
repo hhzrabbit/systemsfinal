@@ -617,22 +617,26 @@ int main() {
     case COP:
 
       while (1){
-	
-	msg = msgs[roles[2]]; 
-	int copChoice = nameToID(msg, names);
-	memset(msgs[roles[2]], 0, MESSAGE_BUFFER_SIZE);
 
-	if (!isAlive[copChoice] || copChoice == -1 || copChoice == roles[2]){
-	  serverTo(roles[2], "Invalid name");
-	}
-	else{
-	  if ( copChoice == roles[0] || copChoice == roles[1] ){
-	    serverTo(roles[2], "This person is a member of the mafia.\n");
+	msg = msgs[roles[2]]; 
+
+	
+	if (strlen(msg)){
+	  int copChoice = nameToID(msg, names);
+	  memset(msgs[roles[2]], 0, MESSAGE_BUFFER_SIZE);
+	
+	  if (!isAlive[copChoice] || copChoice == -1 || copChoice == roles[2]){
+	    serverTo(roles[2], "Invalid name");
 	  }
-	  else {
-	    serverTo(roles[2], "This person is an innocent townsperson.\n");
+	  else{
+	    if ( copChoice == roles[0] || copChoice == roles[1] ){
+	      serverTo(roles[2], "This person is a member of the mafia.\n");
+	    }
+	    else {
+	      serverTo(roles[2], "This person is an innocent townsperson.\n");
+	    }
+	    break;
 	  }
-	  break;
 	}
       }
       
