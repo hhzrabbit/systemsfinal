@@ -12,8 +12,8 @@
 #include "networking.h"
 #include "memctl.h"
 
-#define MAX_PLAYERS 3
-#define PLAYERCOUNT 3
+#define MAX_PLAYERS 4
+#define PLAYERCOUNT 4
 struct sockpair {
   int sock_id;
   int shm_id;
