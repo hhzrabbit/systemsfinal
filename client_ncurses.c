@@ -13,6 +13,10 @@ WINDOW * display;
 WINDOW * chat;
 
 void displayMsg( char * message ) {
+  //assume cursor in chat
+  //  int cur_y, cur_x;
+  //  getyx(chat, cur_y, cur_x);
+
   if ( chatLine + 3 > display_height ) { //going out of bounds
     wmove(display, 1, 1);
     wdeleteln(display);
@@ -21,19 +25,21 @@ void displayMsg( char * message ) {
     chatLine--;
   }
 
-  char newkek[100];
-  sprintf(newkek, " (chatLine=%d)", chatLine);
+  //  char newkek[100];
+  //  sprintf(newkek, " (chatLine=%d)", chatLine);
 
-  char newnewkek[1000];
-  strcpy(newnewkek, message);
-  strcat(newnewkek, newkek);
-  mvwprintw(display, 1 + chatLine, 1, newnewkek);
+  //  char newnewkek[1000];
+  //  strcpy(newnewkek, message);
+  //  strcat(newnewkek, newkek);
+  //  mvwprintw(display, 1 + chatLine, 1, newnewkek);
+
+  mvwprintw(display, 1 + chatLine, 1, message);
   chatLine++;
   
   box(display, 0, 0);
-  box(chat, 0, 0);
-
   wrefresh(display);
+
+  box(chat, 0, 0);
   wrefresh(chat);
 }
 
@@ -74,6 +80,10 @@ int main( int argc, char ** argv ) {
   box(display, 0, 0);
   box(chat, 0, 0);
   wmove(chat, 1, 1);
+  wprintw(chat, ">>> ");
+  
+  wrefresh(chat);
+  wrefresh(display);
   
   keypad(chat, true);
 
@@ -118,21 +128,12 @@ int main( int argc, char ** argv ) {
 
   int f = fork();
   if (f == 0) { //this is the main client (child)
-    int f2 = fork();
-    if (f2 == 0) { //the extreme bug eradicator
-      while (1) {
-	if (getppid() == 1) exit(0); //parent exited
-	wrefresh(display);
-	wrefresh(chat);
-	sleep(1);
-      }
-    }
     char servMsg[MESSAGE_BUFFER_SIZE];
     while ( read(server_sock, servMsg, sizeof(servMsg) ) ) {
       char ** messages = parseMsg(servMsg);
 
       int i = 0;
-      while (messages[i]) {
+      while (messages[i+1]) {
 	displayMsg(messages[i]);
 	i++;
       }
@@ -147,14 +148,13 @@ int main( int argc, char ** argv ) {
 
   //this is the chat that sends to server
   while (1) {
-    //wprintw(chat, ">>> ");
-    wrefresh(chat);
-    //wrefresh(display);
     wgetstr(chat, buffer);
-    
+        
     write (server_sock, buffer, sizeof(buffer) );
     wmove(chat, 1, 1);
     wclrtoeol(chat);
+    
+    wprintw(chat, ">>> ");
   }
 
   endwin(); //never happens lmao

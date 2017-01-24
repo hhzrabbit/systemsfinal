@@ -107,3 +107,8 @@ williamX & haleyZ -- 2017-01-24 17:00
 * fixed bug where the client would not receive the messages the server sends saying "A player joined the game" 
 
 ===========================
+
+williamX -- 2017-01-25 3:14159626525...
+* finished all the chat/window ncurses bugs
+
+===========================
