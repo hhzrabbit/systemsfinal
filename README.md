@@ -64,6 +64,7 @@ $ ./client.out
   * mafia -- chat and choose assassination target
     * mafia must agree on target
   * cop -- make a guess about who is mafia
+    * type name of guess into prompt
     * cop is informed if guess is correct or not
 
 ### Files included in this project
