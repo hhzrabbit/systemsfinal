@@ -39,5 +39,11 @@ $ ./client.out
 * memctl.h
 * makefile
 
+
+### TO PLAY
+* '\w <message>': whisper
+* '\nom <player>': nominated
+
+
 ### Bugs
 * If a player who is alive disconnects during the game, undefined behavior occurs

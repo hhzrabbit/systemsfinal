@@ -12,8 +12,8 @@
 #include "networking.h"
 #include "memctl.h"
 
-#define MAX_PLAYERS 4
 #define PLAYERCOUNT 4
+
 struct sockpair {
   int sock_id;
   int shm_id;
@@ -31,7 +31,7 @@ int randInt();
 
 //GLOBAL VARIABLES
 int current_players = 0;
-struct sockpair players[MAX_PLAYERS];
+struct sockpair players[PLAYERCOUNT];
 
 //helper to send a message to all players
 void sendAll(char * message) {
@@ -125,7 +125,7 @@ int main() {
   sd = server_setup();
   
   //fill up the game
-  while (current_players < MAX_PLAYERS) {
+  while (current_players < PLAYERCOUNT) {
     printf("current players: %d\n", current_players);
     client_conn = server_connect( sd );
     
