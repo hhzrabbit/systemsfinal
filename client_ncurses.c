@@ -9,26 +9,29 @@
 int server_sock; //server socket id
 int chatLine = 0; //where to print chat
 int display_height;
+WINDOW * display;
+WINDOW * chat;
 
-
-void displayMsg( WINDOW * cur_window, WINDOW * display, char * message ) {
-  int cur_y, cur_x;
-  getyx(cur_window, cur_y, cur_x);
-  
+void displayMsg( char * message ) {
+  /*
   if ( chatLine + 3 > display_height ) { //going out of bounds
     wmove(display, 1, 1);
     wdeleteln(display);
     wmove(display, display_height-2, 1);
     winsertln(display);
-    box(display, 0, 0);
     chatLine--;
   }
-  
-  mvwprintw(display, 1 + chatLine, 1, message);
-  wrefresh(display);
+  */
+  char newkek[100];
+  sprintf(newkek, " (chatLine=%d)", chatLine);
+
+  char newnewkek[1000];
+  strcpy(newnewkek, message);
+  strcat(newnewkek, newkek);
+  mvwprintw(display, 1 + chatLine, 1, newnewkek);
   chatLine++;
-  wmove(cur_window, cur_y, cur_x);
-  wrefresh(cur_window);
+  wrefresh(display);
+  wrefresh(chat);
 }
 
 int main( int argc, char ** argv ) {
@@ -41,21 +44,21 @@ int main( int argc, char ** argv ) {
   display_height = max_y - 3;
   
   //newwin( height, width, start_y, start_x );
-  WINDOW * display = newwin(max_y - 3, max_x, 0, 0); 
-  WINDOW * chat = newwin(3, max_x, max_y - 3, 0);
+  display = newwin(max_y - 3, max_x, 0, 0); 
+  chat = newwin(3, max_x, max_y - 3, 0);
   refresh();
-  
+
   box(display, 0, 0);
   box(chat, 0, 0);
-
-  //keypad(chat, true);
-  wmove(chat, 1, 1); //move cursor inside chat box
+  wmove(chat, 1, 1);
+  
+  keypad(chat, true);
 
     
   //ACTUAL CLIENT STUFF STARTS HERE
   char *host;
   if (argc != 2 ) {
-    displayMsg(chat, display, "host not specified, connecting to 127.0.0.1");
+    displayMsg("host not specified, connecting to 127.0.0.1");
     host = "127.0.0.1";
   }
   else {
@@ -64,46 +67,50 @@ int main( int argc, char ** argv ) {
   
   //order matters here bc server connects to chat first
   server_sock = client_connect( host );  
-  displayMsg(chat, display, "Please wait while people join the game...");
+  displayMsg("Please wait while people join the game...");
 
-  wrefresh(chat);
-  wrefresh(display);
-  
   char buffer[MESSAGE_BUFFER_SIZE];
   while ( read(server_sock, buffer, sizeof(buffer)) ) {
-    if ( ! strcmp(buffer, "***BEGIN***") ) {
+    char beginCode[] = "***BEGIN***";
+    if ( ! strcmp(buffer, beginCode) ) {
+      memset(buffer, 0, MESSAGE_BUFFER_SIZE);
       break;
     }
-    displayMsg(chat, display, buffer);
+    displayMsg(buffer);
     memset(buffer, 0, MESSAGE_BUFFER_SIZE);
   }
 
 
   int f = fork();
   if (f == 0) { //this is the main client (child)
+    int f2 = fork();
+    if (f2 == 0) { //the extreme bug eradicator
+      while (1) {
+	if (getppid() == 1) exit(0); //parent exited
+	box(display, 0, 0);
+	box(chat, 0, 0);
+	wrefresh(display);
+	wrefresh(chat);
+	sleep(1);
+      }
+    }
     char servMsg[MESSAGE_BUFFER_SIZE];
     while ( read(server_sock, servMsg, sizeof(servMsg) ) ) {
-      displayMsg(chat, display, servMsg);
+      displayMsg(servMsg);
       memset(servMsg, 0, MESSAGE_BUFFER_SIZE);
-
     }
   }
-  
-  
+
+ 
 
   //this is the chat that sends to server
   while (1) {
-    //THE CRITICAL BUG FIXER :/
-    //displayMsg(chat, display, "Game starting");
     //wprintw(chat, ">>> ");
-    wrefresh(chat);
-    wrefresh(display);
     wgetstr(chat, buffer);
     
     write (server_sock, buffer, sizeof(buffer) );
     wmove(chat, 1, 1);
     wclrtoeol(chat);
-
   }
 
   endwin(); //never happens lmao

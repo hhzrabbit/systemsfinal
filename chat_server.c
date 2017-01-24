@@ -134,7 +134,7 @@ int main() {
     
     players[current_players] = sp;
     current_players++;
-    serverAll("A player has joined the game!\n");
+    serverAll("A player has joined the game!");
     printf("[SERVER] number of players in game: %d\n", current_players);
   }
  
@@ -150,11 +150,12 @@ int main() {
   for (i = 0; i < current_players; i++){
     struct sockpair player = players[i];
     int sock_id = player.sock_id;
+    char beginCode[] = "***BEGIN***";
+    write(sock_id, beginCode, sizeof(beginCode));
+
     int f = fork();
     
     if (f == 0){ //SUBSERVER
-      char beginCode[] = "***BEGIN***";
-      write(sock_id, beginCode, sizeof(beginCode));
       char buffer[MESSAGE_BUFFER_SIZE];
       
       while (read( sock_id, buffer, MESSAGE_BUFFER_SIZE )) {
@@ -333,7 +334,7 @@ int main() {
       
       //clear nighttime chat logs...
       for (n = 0; n < current_players; n++){
-	memset(msgs[n], 0, MESSAGE_SIZE_BUFFER);
+	memset(msgs[n], 0, MESSAGE_BUFFER_SIZE);
       }
       
       phase = DAY;
@@ -629,10 +630,10 @@ int main() {
     //end game
     //(exited a while loop - if sum of alive mafia members > sum of townspeople)
     if (isAlive[0] + isAlive[1] == 0){
-      sendAll("Game over. The townspeople have won!\n");
+    sendAll("Game over. The townspeople have won!\n");
     }
     else if (isAlive[0] + isAlive[1] > numAlive / 2){
-      sendAll("Game over. (Defaulted) The mafia outnumber the townspeople, and have won!\n");
+    sendAll("Game over. (Defaulted) The mafia outnumber the townspeople, and have won!\n");
     }   
     */
   }
