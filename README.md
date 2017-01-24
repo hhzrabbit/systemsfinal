@@ -88,3 +88,4 @@ $ ./client.out
 * If a player disconnects during the game, undefined behavior occurs
 * At the start of the game, each user is prompted to enter their name. Sometimes not every player receives the message "What is your name?" but regardless, the first input will always be taken as the player's name
 * lynching a person during the day time doesn't actually prevent them from interacting with the game
+* ncurses input cursor always goes back to the beginning of the line when messages are displayed. Whatever you type will be sent but it's hard to see.
