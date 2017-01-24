@@ -343,10 +343,6 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
       serverAll(server_msg);
       serverAll("Discussion begins.");
 
-      int z;
-      for (z = 0; z < current_players; z++) {
-	printf("%d should be %d\n", z, nameToID(IDToName(z, names), names));
-      }
       
       //clear nighttime chat logs...
       for (n = 0; n < current_players; n++){
@@ -413,7 +409,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
       for (n = 0; n < PLAYERCOUNT; n++){
 	//	printf("%s is alive?: <%d>\n", IDToName(n, names), isAlive[n]);
 	if (!isAlive[n] || !strlen(msgs[n])) continue;
-
+	
 	//printf("N is currently %d\n", n);
 	//printf("msgs[0] is %s\n", msgs[0]);
 	//printf("msgs[1] is %s\n", msgs[1]);
@@ -549,7 +545,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	}
 	else {
 	  serverAll("The verdict is guilty. The accused shall be executed.");
-	  printf("person who died: %s\n", IDToName(newNom, names));
+	  printf("person who died: %d, %s\n", newNom, IDToName(newNom, names));
 	  isAlive[newNom] = 0;
 	  numAlive -= 1;
 	}
@@ -744,11 +740,11 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
   
   //end game
   //(exited a while loop - if sum of alive mafia members > sum of townspeople)
-  if (isAlive[0] + isAlive[1] == 0){
+  if (isAlive[roles[0]] + isAlive[roles[1]] == 0){
   sendAll("Game over. The townspeople have won!");
   exit(0);
   }
-  else if (isAlive[0] + isAlive[1] > numAlive / 2){
+  else if (isAlive[roles[0]] + isAlive[roles[1]] > numAlive / 2){
   sendAll("Game over. (Defaulted) The mafia outnumber the townspeople, and have won!");
   exit(0);
 
