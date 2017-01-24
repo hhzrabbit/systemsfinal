@@ -456,9 +456,10 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	  }
 	  
 	  else if (!strcmp(cmd, "\\nom")){ //nomination
-	    printf("cmd: %s\n", cmd);
+
 	    printf("cpy: %s\n", cpy);
-	    int newNom = nameToID(cmd, names);
+	    int newNom = nameToID(cpy, names);
+	    printf("newNom: %d\n", newNom);
 	    if (newNom == n){
 	      serverTo(n, "You cannot nominate yourself!");
 	    }
