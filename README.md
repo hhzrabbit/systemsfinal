@@ -75,6 +75,12 @@ $ ./client.out
 * memctl.h
 * makefile
 
+### Features / stuff to brag about
+* whispering between players
+* if you type an unknown command or non-existent player name, the server will let you know and prevent you from doing harm
+* ctrl-C on the server will clear out the shared memory and semaphores
+
+
 ### Bugs
 * If a player disconnects during the game, undefined behavior occurs
 * At the start of the game, each user is prompted to enter their name. Sometimes not every player receives the message "What is your name?" but regardless, the first input will always be taken as the player's name
