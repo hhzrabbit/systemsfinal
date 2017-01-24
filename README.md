@@ -52,7 +52,7 @@ $ ./client.out
 * dscussion period
   * the program is an open chatroom. 
   * special commands:
-    * `\w <message>` -- whisper to another player (other players will see that you are whispering)
+    * `\w <name of player> <message>` -- whisper to another player (other players will see that you are whispering)
     * `\nom <name of player>` -- nominate a player for lynching (three players must nominate a player in order for an accusation to occur)
 * voting period
   * options
@@ -74,6 +74,12 @@ $ ./client.out
 * memctl.c
 * memctl.h
 * makefile
+
+### Features / stuff to brag about
+* whispering between players
+* if you type an unknown command or non-existent player name, the server will let you know and prevent you from doing harm
+* ctrl-C on the server will clear out the shared memory and semaphores
+
 
 ### Bugs
 * If a player disconnects during the game, undefined behavior occurs
