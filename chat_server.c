@@ -404,7 +404,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
       
       //let's parse that chat shall we.
       for (n = 0; n < PLAYERCOUNT; n++){
-	printf("message by %s, who is alive? <%d>", IDToName(n, names), isAlive[n]);
+	//	printf("%s is alive?: <%d>\n", IDToName(n, names), isAlive[n]);
 	if (!isAlive[n] || !strlen(msgs[n])) continue;
 
 	//printf("N is currently %d\n", n);

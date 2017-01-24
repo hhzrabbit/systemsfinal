@@ -109,8 +109,6 @@ int main( int argc, char ** argv ) {
   wattroff(chat, A_BOLD | COLOR_PAIR(4));
   
   wmove(chat, 1, 1);
-  wprintw(chat, ">>> ");
-  wmove(chat, 1, 4); //might be redundant
     
   wrefresh(chat);
   wrefresh(display);
@@ -184,8 +182,6 @@ int main( int argc, char ** argv ) {
     wmove(chat, 1, 1);
     wclrtoeol(chat);
     
-    wprintw(chat, ">>> ");
-    wmove(chat, 1, 4);
     wrefresh(chat);
   }
 
