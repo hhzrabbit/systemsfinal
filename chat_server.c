@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <time.h>
 #include <sys/shm.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
@@ -224,9 +225,8 @@ int main() {
 	shmdt(shm);
 	semup(player.sem_id);
       }
-      
-      sleep(1);
     }
+    nanosleep((const struct timespec[]){{0, 500000000L}}, NULL);
   }
   
   serverAll("Now assigning roles.");
@@ -326,7 +326,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
       semup(player.sem_id);
     }
 
-    sleep(1);
+    nanosleep((const struct timespec[]){{0, 500000000L}}, NULL);
     
     //MAIN GAME: PREP 
     switch (phase){
