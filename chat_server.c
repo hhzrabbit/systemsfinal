@@ -306,13 +306,14 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
     
     //update msgs
     for (i = 0; i < current_players; i++) {
-      struct sockpair player = players[i];
+      if ( ! isAlive[i] ) continue;
+      struct sockpair player = players[i];      
       semdown(player.sem_id);
       char * shm = (char *) shmat(player.shm_id, 0, 0);
       //printf("Reading shm: [%s]\n", shm);
 
       if ( strlen(shm) ) { //if shm not empty
-	printf("i is currently %d\n", i);
+	//	printf("i is currently %d\n", i);
 	if (!strlen(msgs[i])){
 	  strcpy(msgs[i], shm);
 	  memset(shm, 0, MESSAGE_BUFFER_SIZE);
