@@ -307,7 +307,6 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
     //update msgs
     for (i = 0; i < current_players; i++) {
       if ( ! isAlive[i] ) continue;
-      else printf("[%s]: I AM ALIVE\n", IDToName(i, names));
       struct sockpair player = players[i];      
       semdown(player.sem_id);
       char * shm = (char *) shmat(player.shm_id, 0, 0);
@@ -449,7 +448,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	    else {
 	      sprintf(server_msg, "%s is whispering to %s", IDToName(n, names), IDToName(actualTo, names));
 	      serverAll(server_msg);
-	      sprintf(server_msg, "[%s][whisper][%s] %s", IDToName(n, names), IDToName(actualTo, names), cpy);
+	      sprintf(server_msg, "<%s> -> whisper -> <%s> %s", IDToName(n, names), IDToName(actualTo, names), cpy);
 	      sendTo(actualTo, server_msg);
 	      sendTo(n, server_msg);
 	    }
@@ -457,10 +456,10 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	  
 	  else if (!strcmp(cmd, "\\nom")){ //nomination
 
-	    printf("cpy: %s\n", cpy);
+	    //	    printf("cpy: %s\n", cpy);
 	    int newNom = nameToID(cpy, names);
-	    printf("newNom: %d\n", newNom);
-	    printf("newNom's name: %s\n", IDToName(newNom, names);
+	    //	    printf("newNom: %d\n", newNom);
+	    //	    printf("newNom's name: %s\n", IDToName(newNom, names));
 	    if (newNom == n){
 	      serverTo(n, "You cannot nominate yourself!");
 	    }
@@ -490,7 +489,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	  
 	}
 	else {//completely normal chat string
-	  sprintf(server_msg,"[%s] \t %s", IDToName(n, names), msg);
+	  sprintf(server_msg,"<%s> \t %s", IDToName(n, names), msg);
 	  printf("message is %s\n", server_msg);
 	  sendAll(server_msg);
 	}
