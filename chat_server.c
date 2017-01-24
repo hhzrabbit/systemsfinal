@@ -335,7 +335,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
       dayCtr++;
       timeStart = time(NULL);
       playerNoms = (int *)calloc(PLAYERCOUNT, sizeof(int));
-      daytimeRemaining = 60;
+      daytimeRemaining = 5;
       timeElapsed = 0;
       sprintf(server_msg, "It is currently day %d", dayCtr);
       serverAll(server_msg);
