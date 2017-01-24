@@ -630,7 +630,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	      printf("Yeah\n");
 	      c2 = nameToID(cpy, names);
 	      memset(msgs[roles[1]], 0, MESSAGE_BUFFER_SIZE);
-	      if (!isAlive[c1] || c1 == -1 || c1 == roles[0] || c1 == roles[1]) {
+	      if (!isAlive[c2] || c2 == -1 || c2 == roles[0] || c2 == roles[1]) {
 		serverTo(roles[1], "Invalid name ELSE 2");
 		c2 = -1;
 	      }
