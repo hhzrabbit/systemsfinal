@@ -36,11 +36,19 @@ void displayMsg( char * message ) {
 
   chatLine++;
   
+  wbkgd(display, COLOR_PAIR(1));
+  wattron(display, A_BOLD | COLOR_PAIR(2));
   box(display, 0, 0);
+  wattroff(display, A_BOLD | COLOR_PAIR(2));
   wrefresh(display);
 
+
+  wbkgd(chat, COLOR_PAIR(3));
+  wattron(chat, A_BOLD | COLOR_PAIR(4));
   box(chat, 0, 0);
+  wattroff(chat, A_BOLD | COLOR_PAIR(4));
   wrefresh(chat);
+
 }
 
 
@@ -67,6 +75,19 @@ int main( int argc, char ** argv ) {
   initscr();
   cbreak();
   
+  if ( has_colors() ) {
+    start_color();
+    
+    if ( can_change_color() ) {
+      init_color(COLOR_YELLOW, 1000, 961, 557); //reddish yellow
+      init_color(COLOR_RED, 1000, 208, 169); //light red
+    }
+    init_pair(3, COLOR_WHITE, COLOR_BLACK);
+    init_pair(4, COLOR_RED, COLOR_BLACK);
+    init_pair(1, COLOR_BLACK, COLOR_WHITE);
+    init_pair(2, COLOR_RED, COLOR_WHITE);
+  }
+  
   int max_y, max_x;
   getmaxyx( stdscr, max_y, max_x );
 
@@ -77,8 +98,16 @@ int main( int argc, char ** argv ) {
   chat = newwin(3, max_x, max_y - 3, 0);
   refresh();
 
+  wbkgd(display, COLOR_PAIR(1));
+  wattron(display, A_BOLD | COLOR_PAIR(2));
   box(display, 0, 0);
+  wattroff(display, A_BOLD | COLOR_PAIR(2));
+
+  wbkgd(chat, COLOR_PAIR(3));
+  wattron(chat, A_BOLD | COLOR_PAIR(4));
   box(chat, 0, 0);
+  wattroff(chat, A_BOLD | COLOR_PAIR(4));
+  
   wmove(chat, 1, 1);
   wprintw(chat, ">>> ");
   
