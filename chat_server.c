@@ -342,6 +342,11 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
       sprintf(server_msg, "It is currently day %d", dayCtr);
       serverAll(server_msg);
       serverAll("Discussion begins.");
+
+      int z;
+      for (z = 0; z < current_players; z++) {
+	printf("%d should be %d\n", z, nameToID(IDToName(z, names), names));
+      }
       
       //clear nighttime chat logs...
       for (n = 0; n < current_players; n++){
