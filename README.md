@@ -52,7 +52,7 @@ $ ./client.out
 * dscussion period
   * the program is an open chatroom. 
   * special commands:
-    * `\w <message>` -- whisper to another player (other players will see that you are whispering)
+    * `\w <name of player> <message>` -- whisper to another player (other players will see that you are whispering)
     * `\nom <name of player>` -- nominate a player for lynching (three players must nominate a player in order for an accusation to occur)
 * voting period
   * options
