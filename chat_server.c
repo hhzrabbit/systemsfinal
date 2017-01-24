@@ -556,7 +556,7 @@ int main() {
 	      serverTo(roles[0], "Invalid name");
 	    }
 	  }
-
+	  
 	  msg = msgs[roles[1]];
 	  if (strlen(msg)){
 	    c2 = nameToID(msg, names);
@@ -567,9 +567,10 @@ int main() {
 	      serverTo(roles[1], "Invalid name");
 	    }
 	  }
-	  if (validFlag){
 	  
-	    sprintf(server_msg, "Your have chosen to target %s", IDToName(c1, names));
+	  if (validFlag && c1 != -1 && c2 != -1){
+	  
+	    sprintf(server_msg, "You have chosen to target %s", IDToName(c1, names));
 	    serverTo(roles[0], server_msg);
 	    sprintf(server_msg, "Your partner has chosen to target %s", IDToName(c1, names));
 	    serverTo(roles[0], server_msg);
@@ -638,16 +639,18 @@ int main() {
       break;
       
     }
-    /*
+    
     //check for endgame
-
+    /*
     //end game
     //(exited a while loop - if sum of alive mafia members > sum of townspeople)
     if (isAlive[0] + isAlive[1] == 0){
       sendAll("Game over. The townspeople have won!\n");
+      exit(0);
     }
     else if (isAlive[0] + isAlive[1] > numAlive / 2){
       sendAll("Game over. (Defaulted) The mafia outnumber the townspeople, and have won!\n");
+      exit(0);
     }   
     */
   }
