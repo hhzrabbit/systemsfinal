@@ -134,7 +134,7 @@ int main() {
     
     players[current_players] = sp;
     current_players++;
-    serverAll("A player has joined the game!\n");
+    serverAll("A player has joined the game!");
     printf("[SERVER] number of players in game: %d\n", current_players);
   }
  
@@ -150,11 +150,12 @@ int main() {
   for (i = 0; i < current_players; i++){
     struct sockpair player = players[i];
     int sock_id = player.sock_id;
+    char beginCode[] = "***BEGIN***";
+    write(sock_id, beginCode, sizeof(beginCode));
+
     int f = fork();
     
     if (f == 0){ //SUBSERVER
-      char beginCode[] = "***BEGIN***";
-      write(sock_id, beginCode, sizeof(beginCode));
       char buffer[MESSAGE_BUFFER_SIZE];
       
       while (read( sock_id, buffer, MESSAGE_BUFFER_SIZE )) {
@@ -651,6 +652,7 @@ int main() {
     else if (isAlive[0] + isAlive[1] > numAlive / 2){
       sendAll("Game over. (Defaulted) The mafia outnumber the townspeople, and have won!\n");
       exit(0);
+
     }   
     */
   }
