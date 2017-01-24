@@ -70,8 +70,8 @@ $ ./client.out
     * cop is informed if guess is correct or not
 
 ### Files included in this project
-* chat_server.c
-* client_ncurses.c
+* server.c
+* client.c
 * networking.c
 * networking.h
 * memctl.c
