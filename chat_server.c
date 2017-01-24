@@ -308,6 +308,7 @@ int main() {
 	//parse the crap outta it RIGHT HER
 	if (!strlen(msgs[i])){
 	  strcpy(msgs[i], shm);
+	  printf("msgs[i] %d, %s\n", i, msgs[i]);
 	  memset(shm, 0, MESSAGE_BUFFER_SIZE);
 	  //sendAll(shm);
 	  //	  char emptyStr[] = "";
@@ -517,12 +518,12 @@ int main() {
 	while (1){
 	  msg = msgs[roles[0]];
 	  if (strlen(msg)){
-	  c = nameToID(msg, names);
-	  memset(msgs[roles[0]], 0, MESSAGE_BUFFER_SIZE);
-	  if (!isAlive[c] || c == -1 || c == roles[0]) {
-	    serverTo(roles[0], "Invalid name");
-	  }
-	  else break;
+	    c = nameToID(msg, names);
+	    memset(msgs[roles[0]], 0, MESSAGE_BUFFER_SIZE);
+	    if (!isAlive[c] || c == -1 || c == roles[0]) {
+	      serverTo(roles[0], "Invalid name");
+	    }
+	    else break;
 	  }
 	}	
       }
@@ -531,12 +532,12 @@ int main() {
 	while (1){
 	  msg = msgs[roles[1]];
 	  if (strlen(msg)){
-	  c = nameToID(msg, names);
-	  memset(msgs[roles[1]], 0, MESSAGE_BUFFER_SIZE);
-	  if (!isAlive[c] || c == -1 || c == roles[1]) {
-	    serverTo(roles[1], "Invalid name");
-	  }
-	  else break;
+	    c = nameToID(msg, names);
+	    memset(msgs[roles[1]], 0, MESSAGE_BUFFER_SIZE);
+	    if (!isAlive[c] || c == -1 || c == roles[1]) {
+	      serverTo(roles[1], "Invalid name");
+	    }
+	    else break;
 	  }
 	}	
       }
@@ -549,7 +550,10 @@ int main() {
 	while (1){
 	  int validFlag = 1;
 	  msg = msgs[roles[0]];
+	  printf ("0 msg: %swow\n", msg);
+	  sleep(1);
 	  if (strlen(msg)){
+	    printf("got somethin' 0\n");
 	    c1 = nameToID(msg, names);
 	    memset(msgs[roles[0]], 0, MESSAGE_BUFFER_SIZE);
 	    if (!isAlive[c1] || c1 == -1 || c1 == roles[0] || c1 == roles[1]) {
@@ -557,9 +561,11 @@ int main() {
 	      serverTo(roles[0], "Invalid name");
 	    }
 	  }
-	  
+ 
 	  msg = msgs[roles[1]];
+	  printf ("1 msg: %swow\n", msg);
 	  if (strlen(msg)){
+	    printf("got somethin' 1\n");
 	    c2 = nameToID(msg, names);
 	    memset(msgs[roles[1]], 0, MESSAGE_BUFFER_SIZE);
 	  
@@ -568,7 +574,7 @@ int main() {
 	      serverTo(roles[1], "Invalid name");
 	    }
 	  }
-	  
+
 	  if (validFlag && c1 != -1 && c2 != -1){
 	  
 	    sprintf(server_msg, "You have chosen to target %s", IDToName(c1, names));
