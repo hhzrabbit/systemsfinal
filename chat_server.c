@@ -53,9 +53,12 @@ void serverAll(char * message){
 //helper to send a message to specific player
 void sendTo(int playerID, char * message) {
   struct sockpair player = players[playerID];
+  char *p = strchr(message, '\0');
+  *p = '|';
+  *(p+1) = '\0'; //risky bois
   printf("sending to [%d]: \"%s\"\n", playerID, message); 
   write(player.sock_id, message, strlen(message));
-  
+  *p = '\0';
 }
 
 void serverTo(int playerID, char * message){
@@ -147,12 +150,14 @@ int main() {
   close(sd);
   
   int i;
+
   for (i = 0; i < current_players; i++){
     struct sockpair player = players[i];
     int sock_id = player.sock_id;
-    char beginCode[] = "***BEGIN***";
-    write(sock_id, beginCode, sizeof(beginCode));
+    char beginCode[] = "***BEGIN***|"; //and need that '|'
+    write(sock_id, beginCode, sizeof(beginCode)); //COMMENCE!!!
 
+    
     int f = fork();
     
     if (f == 0){ //SUBSERVER

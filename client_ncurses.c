@@ -13,7 +13,6 @@ WINDOW * display;
 WINDOW * chat;
 
 void displayMsg( char * message ) {
-  /*
   if ( chatLine + 3 > display_height ) { //going out of bounds
     wmove(display, 1, 1);
     wdeleteln(display);
@@ -21,7 +20,7 @@ void displayMsg( char * message ) {
     winsertln(display);
     chatLine--;
   }
-  */
+
   char newkek[100];
   sprintf(newkek, " (chatLine=%d)", chatLine);
 
@@ -30,9 +29,33 @@ void displayMsg( char * message ) {
   strcat(newnewkek, newkek);
   mvwprintw(display, 1 + chatLine, 1, newnewkek);
   chatLine++;
+  
+  box(display, 0, 0);
+  box(chat, 0, 0);
+
   wrefresh(display);
   wrefresh(chat);
 }
+
+
+char ** parseMsg(char * servMsg) {
+  char ** strings = (char **) malloc (MESSAGE_BUFFER_SIZE * MESSAGE_BUFFER_SIZE);
+  char * s = servMsg;
+  char * p = s;
+  
+  int i = 0;
+  while (p != NULL) {
+    p = strsep( &s, "|" );
+    strings[i] = p;
+    p = s;
+    i++;
+  }
+  strings[i] = NULL;
+  return strings;
+}
+
+
+
 
 int main( int argc, char ** argv ) {
   initscr();
@@ -72,12 +95,24 @@ int main( int argc, char ** argv ) {
   char buffer[MESSAGE_BUFFER_SIZE];
   while ( read(server_sock, buffer, sizeof(buffer)) ) {
     char beginCode[] = "***BEGIN***";
-    if ( ! strcmp(buffer, beginCode) ) {
-      memset(buffer, 0, MESSAGE_BUFFER_SIZE);
-      break;
+    char ** messages = parseMsg(buffer);
+
+    int i = 0;
+    char began = 0; //to make sure msgs don't get cut off
+    while (messages[i+1]) { //i+1 to remove that trailing \n
+      if (! strcmp(messages[i], beginCode)) {
+	began = 1;
+      }
+      else {
+	displayMsg(messages[i]);
+      }
+      i++;
     }
-    displayMsg(buffer);
-    memset(buffer, 0, MESSAGE_BUFFER_SIZE);
+    memset(buffer, 0, MESSAGE_BUFFER_SIZE);    
+    free(messages);
+    messages = NULL;
+
+    if (began) break;
   }
 
 
@@ -87,8 +122,6 @@ int main( int argc, char ** argv ) {
     if (f2 == 0) { //the extreme bug eradicator
       while (1) {
 	if (getppid() == 1) exit(0); //parent exited
-	box(display, 0, 0);
-	box(chat, 0, 0);
 	wrefresh(display);
 	wrefresh(chat);
 	sleep(1);
@@ -96,7 +129,16 @@ int main( int argc, char ** argv ) {
     }
     char servMsg[MESSAGE_BUFFER_SIZE];
     while ( read(server_sock, servMsg, sizeof(servMsg) ) ) {
-      displayMsg(servMsg);
+      char ** messages = parseMsg(servMsg);
+
+      int i = 0;
+      while (messages[i]) {
+	displayMsg(messages[i]);
+	i++;
+      }
+
+      free(messages);
+      messages = NULL;
       memset(servMsg, 0, MESSAGE_BUFFER_SIZE);
     }
   }
