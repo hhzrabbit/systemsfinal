@@ -287,7 +287,8 @@ int main() {
   char msgs[PLAYERCOUNT][256]; //8 thing array
   int votes[2]; //yes no votes
   int newNom;
-
+  int timeElapsed;
+  
   msg = (char *)malloc(MESSAGE_BUFFER_SIZE);
   memset(msg, 0, MESSAGE_BUFFER_SIZE);
   
@@ -306,10 +307,10 @@ int main() {
 	//parse the crap outta it RIGHT HER
 	if (!strlen(msgs[i])){
 	  strcpy(msgs[i], shm);
-       
+	  memset(shm, 0, MESSAGE_BUFFER_SIZE);
 	  //sendAll(shm);
-	  char emptyStr[] = "";
-	  shm = strcpy(shm, emptyStr);
+	  //	  char emptyStr[] = "";
+	  //	  shm = strcpy(shm, emptyStr);
 	}
       }
       shmdt(shm);
@@ -326,14 +327,14 @@ int main() {
       timeStart = time(NULL);
       playerNoms = (int *)calloc(n, sizeof(int));
       daytimeRemaining = 30;
-      
+      timeElapsed = 0;
       sprintf(server_msg, "It is currently day %d\n", dayCtr);
       serverAll(server_msg);
       serverAll("Discussion begins.\n");
       
       //clear nighttime chat logs...
       for (n = 0; n < current_players; n++){
-	memset(msgs[n], 0, MESSAGE_SIZE_BUFFER);
+	memset(msgs[n], 0, MESSAGE_BUFFER_SIZE);
       }
       
       phase = DAY;
@@ -368,8 +369,8 @@ int main() {
       break;
       
     case DAY:;
-      
-      int timeElapsed = (time(NULL) - timeStart);
+      printf("it's daytime, timeElapsed is %d\n ", timeElapsed);
+      timeElapsed = (time(NULL) - timeStart);
 	
       if ((daytimeRemaining - timeElapsed) % 5 == 0) {
 	sprintf(server_msg, "Daytime remaining: %d", daytimeRemaining);
@@ -384,25 +385,24 @@ int main() {
 
       //let's parse that chat shall we.
       for (n = 0; n < PLAYERCOUNT; n++){
-	if (!isAlive[n]) continue;
-	
+	if (!isAlive[n] || !strlen(msgs[n])) continue;
 	strcpy(msg, msgs[n]);
-	char emptyStr[] = "";
-	strcpy(msgs[n], emptyStr);
-	
+	memset(msgs[n], 0, MESSAGE_BUFFER_SIZE);
+	printf("message is: %s\n", msg);
+	printf("message[0] is %c\n", msg[0]);
 	if (msg[0] == '\\'){//is actually just a \ indicating command
+	  printf("if\n");
 	  //find command
 	  char * cmd;
 	  cmd = strsep(&msg, " ");
-	  if (!strcmp(cmd, "\\w")){
-	    //nice
+	  if (!strcmp(cmd, "\\w")){ //whispering
 	    char * to = strsep(&msg, " ");
 	    int actualTo = nameToID(to, names);
 	    if (actualTo == -1 || actualTo == n){
 	      serverTo(n, "Invalid name.");
 	    }
 	    else {
-	      sprintf(server_msg, "%s is whipsering to %s", IDToName(n, names), IDToName(actualTo, names));
+	      sprintf(server_msg, "%s is whispering to %s", IDToName(n, names), IDToName(actualTo, names));
 	      serverAll(server_msg);
 	      sprintf(server_msg, "[%s] %s", IDToName(n, names), msg);
 	      sendTo(actualTo, server_msg);
@@ -432,12 +432,15 @@ int main() {
 	      }
 	    }
 	  }
-	  else {//completely normal chat string
+	  
+	}
+	else {//completely normal chat string
+	    printf("else\n");
 	    sprintf(server_msg,"[%s] \t %s", IDToName(n, names), msg);
 	    sendAll(server_msg); //needs to be processed
-	  }
 	}
-      
+	
+	
 	timeStart = time(NULL);
       }
       
@@ -503,6 +506,7 @@ int main() {
       if (!isAlive[roles[1]]){
 	while (1){
 	  msg = msgs[roles[0]];
+	  if (strlen(msg)){
 	  c = nameToID(msg, names);
 	  char emptyStr[] = "";
 	  strcpy(msgs[roles[0]], emptyStr);
@@ -510,12 +514,14 @@ int main() {
 	    serverTo(roles[0], "Invalid name");
 	  }
 	  else break;
+	  }
 	}	
       }
       
       else if (!isAlive[roles[0]]){
 	while (1){
 	  msg = msgs[roles[1]];
+	  if (strlen(msg)){
 	  c = nameToID(msg, names);
 	  char emptyStr[] = "";
 	  strcpy(msgs[roles[1]], emptyStr);
@@ -523,6 +529,7 @@ int main() {
 	    serverTo(roles[1], "Invalid name");
 	  }
 	  else break;
+	  }
 	}	
       }
       
@@ -532,25 +539,27 @@ int main() {
 	int c2;
 	
 	while (1){
-	  msg = msgs[roles[0]];
-	  c1 = nameToID(msg, names);
-	  msg = msgs[roles[1]];
-	  c2 = nameToID(msg, names);
-	  char emptyStr[] = "";
-	  strcpy(msgs[roles[0]], emptyStr);
-	  strcpy(msgs[roles[1]], emptyStr);
-	
 	  int validFlag = 1;
-	  if (!isAlive[c1] || c1 == -1 || c1 == roles[0] || c1 == roles[1]) {
-	    validFlag = 0;
-	    serverTo(roles[0], "Invalid name");
+	  msg = msgs[roles[0]];
+	  if (strlen(msg)){
+	    c1 = nameToID(msg, names);
+	    memset(msgs[roles[0]], 0, MESSAGE_BUFFER_SIZE);
+	    if (!isAlive[c1] || c1 == -1 || c1 == roles[0] || c1 == roles[1]) {
+	      validFlag = 0;
+	      serverTo(roles[0], "Invalid name");
+	    }
 	  }
 	  
-	  if (!isAlive[c2] || c2 == -1 || c2 == roles[0] || c2 == roles[1]) {
-	    validFlag = 0;
-	    serverTo(roles[1], "Invalid name");
-	  }
+	  msg = msgs[roles[1]];
+	  if (strlen(msg)){
+	    c2 = nameToID(msg, names);
+	    memset(msgs[roles[1]], 0, MESSAGE_BUFFER_SIZE);
 	  
+	    if (!isAlive[c2] || c2 == -1 || c2 == roles[0] || c2 == roles[1]) {
+	      validFlag = 0;
+	      serverTo(roles[1], "Invalid name");
+	    }
+	  }
 	  if (validFlag){
 	  
 	    sprintf(server_msg, "Your have chosen to target %s", IDToName(c1, names));

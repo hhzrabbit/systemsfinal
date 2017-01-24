@@ -94,10 +94,10 @@ int main( int argc, char ** argv ) {
   //this is the chat that sends to server
   while (1) {
     //THE CRITICAL BUG FIXER :/
-    //displayMsg(chat, display, "Game starting");
+    displayMsg(chat, display, "Game starting");
     //wprintw(chat, ">>> ");
     wrefresh(chat);
-    wrefresh(display);
+    //wrefresh(display);
     wgetstr(chat, buffer);
     
     write (server_sock, buffer, sizeof(buffer) );
