@@ -235,15 +235,13 @@ int main() {
     roles[n] = n;
   }
 
-  //grab a random player from the list...
-  for (n = 0; n < 5; n++){//let's shake it up
-    //swap rand.
-    int first = abs(randInt()) % current_players;
-    int second = abs(randInt()) % current_players;
-    int temp = roles[first];
-    roles[first] = roles[second];
-    roles[second] = temp;
-  }
+  //Fisher-Yates
+for (n = PLAYERCOUNT - 1; n >= 0; --n){
+    int rand = abs(randInt()) % (n + 1);
+    int temp = roles[n];
+    roles[n] = roles[rand];
+    roles[rand] = temp;
+}
   
   sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!", IDToName(roles[1], names));
   serverTo(roles[0], server_msg);
