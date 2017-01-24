@@ -22,14 +22,14 @@ int setupShm(){
 
   //make shm
   shmid = shmget(key, 100 * 255 * sizeof(char), IPC_CREAT | 0644); //size for 10 msgs
-  printf("shared memory created, id %d\n", shmid);
+  //printf("shared memory created, id %d\n", shmid);
 
   //clear out shm
   shm = (char *) shmat(shmid, 0, 0);
   char empty_str[] = "";
   shm = strcpy(shm, empty_str);
   
-  printf("shared memory value set: %s\n", shm);
+  //printf("shared memory value set: %s\n", shm);
 
   return shmid;
 }
@@ -42,12 +42,12 @@ int setupSem(){
 
   //make sem
   semid = semget(key, 1, IPC_CREAT | 0644);
-  printf("semaphore created, id %d\n", semid);
+  //printf("semaphore created, id %d\n", semid);
 
   //set sem value
   su.val = 1;
   sc = semctl(semid, 0, SETVAL, su);
-  printf("semaphore value set: %d\n", sc);
+  //printf("semaphore value set: %d\n", sc);
 
   return semid;
 }

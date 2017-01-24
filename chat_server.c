@@ -127,7 +127,7 @@ int main() {
   
   //fill up the game
   while (current_players < MAX_PLAYERS) {
-    printf("current players: %d\n", current_players);
+    //    printf("current players: %d\n", current_players);
     client_conn = server_connect( sd );
     
     struct sockpair sp;
@@ -204,7 +204,7 @@ int main() {
   while (!nameFlag){
     nameFlag = 1;
     for (i = 0; i < current_players; i++){
-      printf("Checking namecheck for %d, %d\n", i, nameCheck[i]);
+      //      printf("Checking namecheck for %d, %d\n", i, nameCheck[i]);
       if (!nameCheck[i]){
         
 	nameFlag = 0;
@@ -646,6 +646,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	  if (c1 == -1 || c2 == -1){
 	    serverTo(roles[0], "Waiting for selection.");
 	    serverTo(roles[1], "Waiting for selection.");
+	    sleep(5);
 	  }
 	  else {        
 	    if (c1 != c2){
