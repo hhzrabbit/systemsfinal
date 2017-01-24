@@ -142,7 +142,8 @@ int main() {
   printf("[SERVER] enough players, game beginning.\n");
 
   serverAll("Welcome to Mafia!");
-  char * server_msg;
+  char * server_msg =(char *)malloc(MESSAGE_BUFFER_SIZE);
+  memset(server_msg, 0, MESSAGE_BUFFER_SIZE);
   close(sd);
   
   int i;
@@ -185,6 +186,7 @@ int main() {
   for (n = 0; n < PLAYERCOUNT; n++){
     names[n] = (char *)malloc(MESSAGE_BUFFER_SIZE);
   }
+  
   int nameCheck[PLAYERCOUNT];
   memset(nameCheck, 0, sizeof(nameCheck));
   
@@ -195,7 +197,7 @@ int main() {
   while (!nameFlag){
     nameFlag = 1;
     for (i = 0; i < current_players; i++){
-      printf("Checking namecheck %d\n", nameCheck[i]);
+      printf("Checking namecheck for %d, %d\n", i, nameCheck[i]);
       if (!nameCheck[i]){
         
 	nameFlag = 0;
@@ -205,9 +207,10 @@ int main() {
 	char * shm = (char *) shmat(player.shm_id, 0, 0);
 
 	if ( strlen(shm) ) { //if shm not empty
-	  strcpy(names[i], shm);     
+	  strcpy(names[i], shm);	  
 	  sprintf(server_msg, "Welcome, %s.", names[i]);
 	  serverAll(server_msg);
+	  printf("made it here\n");
 	  nameCheck[i] = 1;
 	  char emptyStr[] = "";
 	  shm = strcpy(shm, emptyStr);
@@ -220,7 +223,6 @@ int main() {
       sleep(1);
     }
   }
-  
   
   serverAll("Now assigning roles.");
   //distribute 1-playercount among 1-8
@@ -240,13 +242,6 @@ int main() {
     printf("second is now %d", roles[second]);
   }
   
-  printf("roles[0] is %d\n", roles[0]);
-  
-  printf("roles[1] is %d\n", roles[1]);
-  
-  printf("roles[2] is %d\n", roles[2]);
-  
-  serverAll("randomized");
   sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!\n", IDToName(roles[1], names));
   serverTo(roles[0], server_msg);
   sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!\n", IDToName(roles[0], names));
@@ -256,7 +251,7 @@ int main() {
     serverTo(roles[n], "You are a townsperson! Find out who the mafia are.\n");
   }
 
-  /*
+  
   //  roles[0] = 1 means player 1 has role 0, which is mafia. index is the player id. 
 
   //MIDGAME
@@ -293,6 +288,8 @@ int main() {
   int votes[2]; //yes no votes
   int newNom;
 
+  msg = (char *)malloc(MESSAGE_BUFFER_SIZE);
+  memset(msg, 0, MESSAGE_BUFFER_SIZE);
   
   //main server check shared memory in a loop
   //when one person types msg, sends to everyone
@@ -333,11 +330,10 @@ int main() {
       sprintf(server_msg, "It is currently day %d\n", dayCtr);
       serverAll(server_msg);
       serverAll("Discussion begins.\n");
-
+      
       //clear nighttime chat logs...
       for (n = 0; n < current_players; n++){
-	char emptyStr[] = "";
-	strcpy(msgs[n], emptyStr);
+	memset(msgs[n], 0, MESSAGE_SIZE_BUFFER);
       }
       
       phase = DAY;
@@ -627,7 +623,7 @@ int main() {
       break;
       
     }
-    
+    /*
     //check for endgame
 
     //end game
@@ -638,9 +634,9 @@ int main() {
     else if (isAlive[0] + isAlive[1] > numAlive / 2){
       sendAll("Game over. (Defaulted) The mafia outnumber the townspeople, and have won!\n");
     }   
-
+    */
   }
 
-  */
+  
   return 0;
 }
