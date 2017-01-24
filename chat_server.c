@@ -215,7 +215,7 @@ int main() {
 	if ( strlen(shm) ) { //if shm not empty
 	  strcpy(names[i], shm);	  
 	  sprintf(server_msg, "Welcome %s.", names[i]);
-	  serverAll(server_msg);
+	  serverTo(i, server_msg);
 	  nameCheck[i] = 1;
 	  char emptyStr[] = "";
 	  shm = strcpy(shm, emptyStr);
@@ -234,7 +234,7 @@ int main() {
   for (n = 0; n < current_players; n++){//initialize
     roles[n] = n;
   }
-  
+
   //grab a random player from the list...
   for (n = 0; n < 5; n++){//let's shake it up
     //swap rand.
@@ -297,6 +297,7 @@ int main() {
   int votes[2]; //yes no votes
   int newNom;
   int timeElapsed;
+  int voted[PLAYERCOUNT];
   
   msg = (char *)malloc(MESSAGE_BUFFER_SIZE);
   memset(msg, 0, MESSAGE_BUFFER_SIZE);
@@ -310,7 +311,7 @@ int main() {
       struct sockpair player = players[i];
       semdown(player.sem_id);
       char * shm = (char *) shmat(player.shm_id, 0, 0);
-      printf("reading shm: [%s]\n", shm);
+      printf("Reading shm: [%s]\n", shm);
 
       if ( strlen(shm) ) { //if shm not empty
 	printf("i is currently %d\n", i);
@@ -335,7 +336,7 @@ int main() {
     case DAYPREP:
       dayCtr++;
       timeStart = time(NULL);
-      playerNoms = (int *)calloc(n, sizeof(int));
+      playerNoms = (int *)calloc(PLAYERCOUNT, sizeof(int));
       daytimeRemaining = 25;
       timeElapsed = 0;
       sprintf(server_msg, "It is currently day %d\n", dayCtr);
@@ -352,9 +353,13 @@ int main() {
 
     case VOTEPREP:
       memset(votes, 0, 8);
+      memset(playerNoms, 0, PLAYERCOUNT * 4);
       timeStart = time(NULL);
       serverAll("Vote begins. Minimum 4 votes to execute. 30 second timer.\n");
       phase = VOTE;
+      for (n = 0; n < PLAYERCOUNT; n++){
+	voted[n] = 0;
+      }
       break;
 
     case NIGHTPREP:
@@ -483,34 +488,41 @@ int main() {
       break;
       
     case VOTE:
+      
 
       for (n = 0; n < PLAYERCOUNT; n++){
-	if (n == newNom || !isAlive[n]) continue;  
-
+	if (n == newNom || !isAlive[n] || voted[n]) continue;  
+	
 	strcpy(msg, msgs[n]);
 	if (strlen(msg) == 0){
 	  continue;
 	}
-	if (!strcmp(msg, "y")){
+	if (!strcmp(msg, "y") || !strcmp(msg, "yes")){
 	  sprintf(server_msg,"%s has voted for execution.", IDToName(n, names));
 	  serverAll(server_msg);
 	  votes[0]++;
+	  voted[n] = 1;
 	}
-	else if (!strcmp(msg, "n")){
+	else if (!strcmp(msg, "n") || !strcmp(msg, "no")){
 	  
 	  sprintf(server_msg, "%s has voted against execution", IDToName(n, names));
 	  serverAll(server_msg);
 	  votes[1]++;
+	  voted[n] = 1;
 	}
 	  
       }
-      
-      curTime = time(NULL);
-	
 
+      curTime = time(NULL);
+      timeElapsed = curTime - timeStart;
 	
-      if (curTime - timeStart >= 30){
-	phase = 1;
+      if ((30 - timeElapsed) % 5 == 0) {
+	sprintf(server_msg, "Vote time remaining: %d", 30 - timeElapsed);
+	serverAll(server_msg);
+      }
+	
+      if (timeElapsed >= 30){
+	phase = DAY;
 	timeStart = curTime;
 	  
 	if (votes[0] < votes[1]){
