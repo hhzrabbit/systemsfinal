@@ -542,7 +542,9 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	}
 	else {
 	  serverAll("The verdict is guilty. The accused shall be executed.");
+	  printf("person who died: %s\n", IDToName(newNom, names));
 	  isAlive[newNom] = 0;
+	  numAlive -= 1;
 	}
 
       }
