@@ -14,8 +14,8 @@ WINDOW * chat;
 
 void displayMsg( char * message ) {
   //assume cursor in chat
-  //  int cur_y, cur_x;
-  //  getyx(chat, cur_y, cur_x);
+  int cur_y, cur_x;
+  getyx(chat, cur_y, cur_x);
 
   if ( chatLine + 3 > display_height ) { //going out of bounds
     wmove(display, 1, 1);
@@ -47,6 +47,7 @@ void displayMsg( char * message ) {
   wattron(chat, A_BOLD | COLOR_PAIR(4));
   box(chat, 0, 0);
   wattroff(chat, A_BOLD | COLOR_PAIR(4));
+  wmove(chat, cur_y, cur_x);
   wrefresh(chat);
 
 }
