@@ -108,7 +108,7 @@ williamX & haleyZ -- 2017-01-24 17:00
 
 ===========================
 
-williamX -- 2017-01-25 3:14159626525...
+williamX -- 2017-01-24 3:14159626525...
 * finished all the chat/window ncurses bugs
 
 ===========================
@@ -116,5 +116,10 @@ williamX -- 2017-01-25 3:14159626525...
 all -- 2017-01-24 00:00 - 05:00
 * collectively dying 
 * pulled through
+
+===========================
+
+williamX -- 2017-01-24 4:14
+* made it look pretty
 
 ===========================
