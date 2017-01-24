@@ -49,7 +49,7 @@ $ ./client.out
 
 
 ### General game-flow information
-* dscussion period
+* discussion period
   * the program is an open chatroom. 
   * special commands:
     * `\w <name of player> <message>` -- whisper to another player (other players will see that you are whispering)
@@ -62,6 +62,8 @@ $ ./client.out
   * votes will be revealed after the decision is made
 * night time
   * mafia -- chat and choose assassination target
+    * type to chat
+    * `\c <name of player` -- choose a player to assassinate
     * mafia must agree on target
   * cop -- make a guess about who is mafia
     * type name of guess into prompt
