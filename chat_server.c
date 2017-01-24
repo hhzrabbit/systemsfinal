@@ -565,7 +565,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	    c = nameToID(msg, names);
 	    memset(msgs[roles[0]], 0, MESSAGE_BUFFER_SIZE);
 	    if (!isAlive[c] || c == -1 || c == roles[0]) {
-	      serverTo(roles[0], "Invalid name.");
+	      serverTo(roles[0], "Invalid name. CASE 1 ALIVE IF");
 	    }
 	    else success = 1;
 	  }	
@@ -577,7 +577,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	    c = nameToID(msg, names);
 	    memset(msgs[roles[1]], 0, MESSAGE_BUFFER_SIZE);
 	    if (!isAlive[c] || c == -1 || c == roles[1]) {
-	      serverTo(roles[1], "Invalid name.");
+	      serverTo(roles[1], "Invalid name. CASE 1 ALIVE ELSEIF");
 	    }
 	    else success = 1;
 	  }	
@@ -599,7 +599,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	      memset(msgs[roles[0]], 0, MESSAGE_BUFFER_SIZE);
 	      printf("c1: %d\n", c1);
 	      if (!isAlive[c1] || c1 == -1 || c1 == roles[0] || c1 == roles[1]) {
-		serverTo(roles[0], "Invalid name");
+		serverTo(roles[0], "Invalid name ELSE 1");
 		c1 = -1;
 	      }
 	      else {
@@ -631,7 +631,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	      c2 = nameToID(cpy, names);
 	      memset(msgs[roles[1]], 0, MESSAGE_BUFFER_SIZE);
 	      if (!isAlive[c1] || c1 == -1 || c1 == roles[0] || c1 == roles[1]) {
-		serverTo(roles[1], "Invalid name");
+		serverTo(roles[1], "Invalid name ELSE 2");
 		c2 = -1;
 	      }
 	      else {
