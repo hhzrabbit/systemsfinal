@@ -245,13 +245,13 @@ int main() {
     roles[second] = temp;
   }
   
-  sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!\n", IDToName(roles[1], names));
+  sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!", IDToName(roles[1], names));
   serverTo(roles[0], server_msg);
-  sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!\n", IDToName(roles[0], names));
+  sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!", IDToName(roles[0], names));
   serverTo(roles[1], server_msg);
-  serverTo(roles[2], "You are the cop! Find out who the mafia are.\n");
+  serverTo(roles[2], "You are the cop! Find out who the mafia are.");
   for (n = 3; n < PLAYERCOUNT; n++){
-    serverTo(roles[n], "You are a townsperson! Find out who the mafia are.\n");
+    serverTo(roles[n], "You are a townsperson! Find out who the mafia are.");
   }
 
   
@@ -280,10 +280,7 @@ int main() {
   int dayCtr = 0;
   int phase = DAYPREP;
 
-  
-  int c1;
-  int c2;
-  int success;
+
   int timeStart;
   int daytimeRemaining;
   int nighttimeRemaining;
@@ -314,6 +311,7 @@ int main() {
       printf("Reading shm: [%s]\n", shm);
 
       if ( strlen(shm) ) { //if shm not empty
+	//parse the crap outta it RIGHT HER
 	printf("i is currently %d\n", i);
 	if (!strlen(msgs[i])){
 	  strcpy(msgs[i], shm);
@@ -338,10 +336,11 @@ int main() {
       timeStart = time(NULL);
       playerNoms = (int *)calloc(PLAYERCOUNT, sizeof(int));
       daytimeRemaining = 25;
+
       timeElapsed = 0;
-      sprintf(server_msg, "It is currently day %d\n", dayCtr);
+      sprintf(server_msg, "It is currently day %d", dayCtr);
       serverAll(server_msg);
-      serverAll("Discussion begins.\n");
+      serverAll("Discussion begins.");
       
       //clear nighttime chat logs...
       for (n = 0; n < current_players; n++){
@@ -355,7 +354,7 @@ int main() {
       memset(votes, 0, 8);
       memset(playerNoms, 0, PLAYERCOUNT * 4);
       timeStart = time(NULL);
-      serverAll("Vote begins. Minimum 4 votes to execute. 30 second timer.\n");
+      serverAll("Vote begins. Minimum 4 votes to execute. 30 second timer.");
       phase = VOTE;
       for (n = 0; n < PLAYERCOUNT; n++){
 	voted[n] = 0;
@@ -372,19 +371,15 @@ int main() {
       
       //mafia prompt (maybe write a sendMafia, something)
       if (isAlive[roles[0]])
-	serverTo(roles[0], "Wake up, mafia. Pick a person to kill.\n");
+	serverTo(roles[0], "Wake up, mafia. Pick a person to kill.");
       if (isAlive[roles[1]])
-	serverTo(roles[1], "Wake up, mafia. Pick a person to kill.\n");
+	serverTo(roles[1], "Wake up, mafia. Pick a person to kill.");
       phase = MAF;
-      success = 0;
-      c1 = -1;
-      c2 = -1;
       break;
 
     case COPPREP:
       serverTo(roles[2], "Wake up, cop. Pick a person to investigate.\n");
       phase = COP;
-      success = 0;
       break;
       
     case DAY:;
@@ -460,7 +455,7 @@ int main() {
 	      *(playerNoms + newNom) += 1;
 	      if (* (playerNoms + newNom) == 3){
 		//vote triggered
-		sprintf(server_msg, "%s has been accused! Should they be executed? (yes/no)\n", IDToName(newNom, names));
+		sprintf(server_msg, "%s has been accused! Should they be executed? (yes/no)", IDToName(newNom, names));
 		serverAll(server_msg);	    
 		phase = VOTEPREP;
 		
@@ -477,10 +472,10 @@ int main() {
 	  
 	}
 	else {//completely normal chat string
-	  printf("else\n");
-	  sprintf(server_msg,"[%s] \t %s", IDToName(n, names), msg);
-	  printf("message is %s\n", server_msg);
-	  sendAll(server_msg); //needs to be processed
+	    printf("else\n");
+	    sprintf(server_msg,"[%s] \t %s", IDToName(n, names), msg);
+	    printf("message is %s\n", server_msg);
+	    sendAll(server_msg); //needs to be processed
 	}
 	
       }
@@ -526,16 +521,16 @@ int main() {
 	timeStart = curTime;
 	  
 	if (votes[0] < votes[1]){
-	  serverAll("The verdict is innocent. The accused lives.\n");
+	  serverAll("The verdict is innocent. The accused lives.");
 	}
 	else if (votes[0] == votes[1]){
-	  serverAll("Tied vote. The accused lives.\n");
+	  serverAll("Tied vote. The accused lives.");
 	}
 	else if (votes[0] < 4){
-	  serverAll("Not enough votes. The accused lives.\n");
+	  serverAll("Not enough votes. The accused lives.");
 	}
 	else {
-	  serverAll("The verdict is guilty. The accused shall be executed.\n");
+	  serverAll("The verdict is guilty. The accused shall be executed.");
 	  isAlive[newNom] = 0;
 	}
 
@@ -548,157 +543,149 @@ int main() {
       break;
 
     case MAF:; //one must be alive or game would be over
-
+      
       int c;
-      if (!success){
-
-	//CASE 1 ALIVE
-	if (!isAlive[roles[1]]){
+      
+      if (!isAlive[roles[1]]){
+	while (1){
 	  msg = msgs[roles[0]];
 	  if (strlen(msg)){
-	    c = nameToID(msg, names);
-	    memset(msgs[roles[0]], 0, MESSAGE_BUFFER_SIZE);
-	    if (!isAlive[c] || c == -1 || c == roles[0]) {
-	      serverTo(roles[0], "Invalid name");
-	    }
-	    else success = 1;
-	  }	
-	}
+	  c = nameToID(msg, names);
+	  memset(msgs[roles[0]], 0, MESSAGE_BUFFER_SIZE);
+	  if (!isAlive[c] || c == -1 || c == roles[0]) {
+	    serverTo(roles[0], "Invalid name");
+	  }
+	  else break;
+	  }
+	}	
+      }
       
-	else if (!isAlive[roles[0]]){
+      else if (!isAlive[roles[0]]){
+	while (1){
 	  msg = msgs[roles[1]];
 	  if (strlen(msg)){
-	    c = nameToID(msg, names);
-	    memset(msgs[roles[1]], 0, MESSAGE_BUFFER_SIZE);
-	    if (!isAlive[c] || c == -1 || c == roles[1]) {
-	      serverTo(roles[1], "Invalid name");
-	    }
-	    else success = 1;
-	  }	
-	}
-
-	//CASE 2 ALIVE
-	else {
+	  c = nameToID(msg, names);
+	  memset(msgs[roles[1]], 0, MESSAGE_BUFFER_SIZE);
+	  if (!isAlive[c] || c == -1 || c == roles[1]) {
+	    serverTo(roles[1], "Invalid name");
+	  }
+	  else break;
+	  }
+	}	
+      }
+      
+      else {
+	
+	int c1 = -1;
+	int c2 = -1;
+	
+	while (1){
+	  int validFlag = 1;
 	  msg = msgs[roles[0]];
-	  
 	  if (strlen(msg)){
 	    c1 = nameToID(msg, names);
-	    printf("First choice is %d", c1);
 	    memset(msgs[roles[0]], 0, MESSAGE_BUFFER_SIZE);
 	    if (!isAlive[c1] || c1 == -1 || c1 == roles[0] || c1 == roles[1]) {
+	      validFlag = 0;
 	      serverTo(roles[0], "Invalid name");
 	    }
-	    else {
-	      sprintf(server_msg, "You have chosen to target %s", IDToName(c1, names));
-	      serverTo(roles[0], server_msg);
-	      sprintf(server_msg, "Your partner has chosen to target %s", IDToName(c1, names));
-	      serverTo(roles[0], server_msg);
-	    }
-	    
 	  }
- 
+
 	  msg = msgs[roles[1]];
 	  if (strlen(msg)){
 	    c2 = nameToID(msg, names);
-	    printf("Sec choice is %d", c2);
 	    memset(msgs[roles[1]], 0, MESSAGE_BUFFER_SIZE);
 	  
 	    if (!isAlive[c2] || c2 == -1 || c2 == roles[0] || c2 == roles[1]) {
+	      validFlag = 0;
 	      serverTo(roles[1], "Invalid name");
 	    }
-	    else {
-	      sprintf(server_msg, "You have chosen to target %s", IDToName(c2, names));
-	      serverTo(roles[1], server_msg);
-	      sprintf(server_msg, "Your partner has chosen to target %s", IDToName(c2, names));
-	      serverTo(roles[1], server_msg);
-	    }
 	  }
-
-	  if (c1 == -1 || c2 == -1){
-	    serverTo(roles[0], "Waiting for selection.");
-	    serverTo(roles[1], "Waiting for selection.");
-	  }
-	  else {        
-	    if (c1 != c2){
+	  if (validFlag){
+	  
+	    sprintf(server_msg, "Your have chosen to target %s", IDToName(c1, names));
+	    serverTo(roles[0], server_msg);
+	    sprintf(server_msg, "Your partner has chosen to target %s", IDToName(c1, names));
+	    serverTo(roles[0], server_msg);
+	    sprintf(server_msg, "You have chosen to target %s", IDToName(c2, names));
+	    serverTo(roles[1], server_msg);
+	    sprintf(server_msg, "Your partner has chosen to target %s", IDToName(c1, names));
+	    serverTo(roles[1], server_msg);
+	         
+	    if (c1 != c2 || c1 == -1 || c2 == -1){
 	      serverTo(roles[0], "You must agree on the target!");
 	      serverTo(roles[1], "You must agree on the target!");
 	    }
-	    else {
-	      success = 1;
-	      c= c1;
-	    }  
+	    else break;
+	    
 	  }
-	}
-	//that ends
-      }
-      //we're successful
-      else {
-	
-	if (isAlive[roles[0]]){
-	  sprintf(server_msg, "You have chosen to kill %s. Go to sleep.", IDToName(c, names));
-	  serverTo(roles[0], server_msg);
-	}
-	
-	if (isAlive[roles[1]]){       
-	  sprintf(server_msg, "You have chosen to kill %s. Go to sleep.", IDToName(c, names));
-	  serverTo(roles[1], server_msg);
-	}
-
-	isAlive[c] = 0; //ooh killem
-	
-	numAlive -= 1;
-     
-	if (isAlive[roles[2]])
-	  phase = COPPREP;
-	else
-	  phase = DAYPREP;
 	  
-      }	
-    break;
-      
-  case COP:
+	  c = c1;
 
-    msg = msgs[roles[2]]; 
-
-    if (strlen(msg)){
-      int copChoice = nameToID(msg, names);
-      memset(msgs[roles[2]], 0, MESSAGE_BUFFER_SIZE);
+	}
+      }
 	
-      if (!isAlive[copChoice] || copChoice == -1 || copChoice == roles[2]){
-	serverTo(roles[2], "Invalid name");
+      if (isAlive[roles[0]]){
+	sprintf(server_msg, "You have chosen to kill %s. Go to sleep.", IDToName(c, names));
+	serverTo(roles[0], server_msg);
       }
-      
-      else{
-	if ( copChoice == roles[0] || copChoice == roles[1] ){
-	  serverTo(roles[2], "This person is a member of the mafia.\n");
-	}
-	else {
-	  serverTo(roles[2], "This person is an innocent townsperson.\n");
-	}
-	phase = DAYPREP;
+	
+      if (isAlive[roles[1]]){       
+	sprintf(server_msg, "You have chosen to kill %s. Go to sleep.", IDToName(c, names));
+	serverTo(roles[1], server_msg);
       }
-    }
-    
-    break;
-      
-  }
-    
-  //check for endgame
-  /*
-  //end game
-  //(exited a while loop - if sum of alive mafia members > sum of townspeople)
-  if (isAlive[0] + isAlive[1] == 0){
-  sendAll("Game over. The townspeople have won!\n");
-  exit(0);
-  }
-  else if (isAlive[0] + isAlive[1] > numAlive / 2){
-  sendAll("Game over. (Defaulted) The mafia outnumber the townspeople, and have won!\n");
-  exit(0);
 
-  }   
-  */
-}
+      isAlive[c] = 0; //ooh killem
+	
+      numAlive -= 1;
+     
+      if (isAlive[roles[2]])
+	phase = COPPREP;
+      else
+	phase = DAYPREP;
+	
+      break;
+      
+    case COP:
+
+      while (1){
+	
+	msg = msgs[roles[2]]; 
+	int copChoice = nameToID(msg, names);
+	memset(msgs[roles[2]], 0, MESSAGE_BUFFER_SIZE);
+
+	if (!isAlive[copChoice] || copChoice == -1 || copChoice == roles[2]){
+	  serverTo(roles[2], "Invalid name");
+	}
+	else{
+	  if ( copChoice == roles[0] || copChoice == roles[1] ){
+	    serverTo(roles[2], "This person is a member of the mafia.");
+	  }
+	  else {
+	    serverTo(roles[2], "This person is an innocent townsperson.");
+	  }
+	  break;
+	}
+      }
+      
+      phase = DAYPREP;
+      break;
+      
+    }
+    /*
+    //check for endgame
+
+    //end game
+    //(exited a while loop - if sum of alive mafia members > sum of townspeople)
+    if (isAlive[0] + isAlive[1] == 0){
+    sendAll("Game over. The townspeople have won!");
+    }
+    else if (isAlive[0] + isAlive[1] > numAlive / 2){
+    sendAll("Game over. (Defaulted) The mafia outnumber the townspeople, and have won!");
+    }   
+    */
+  }
 
   
-return 0;
+  return 0;
 }
