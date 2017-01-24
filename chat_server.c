@@ -98,10 +98,10 @@ int randInt(){
 }
 
 int nameToID(char * name, char * names[]){
-  int n = 0;
-  for (n = 0; n < PLAYERCOUNT; n++){
-    if (!strcmp(name, names[n]))
-      return n;
+  int k = 0;
+  for (k = 0; k < PLAYERCOUNT; k++){
+    if (!strcmp(name, names[k]))
+      return k;
   }
   return -1;
 }
@@ -210,7 +210,6 @@ int main() {
 	  strcpy(names[i], shm);	  
 	  sprintf(server_msg, "Welcome, %s.", names[i]);
 	  serverAll(server_msg);
-	  printf("made it here\n");
 	  nameCheck[i] = 1;
 	  char emptyStr[] = "";
 	  shm = strcpy(shm, emptyStr);
@@ -238,8 +237,6 @@ int main() {
     int temp = roles[first];
     roles[first] = roles[second];
     roles[second] = temp;
-    printf("first is now %d", roles[first]);
-    printf("second is now %d", roles[second]);
   }
   
   sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!\n", IDToName(roles[1], names));
@@ -257,7 +254,10 @@ int main() {
   //MIDGAME
   int isAlive[PLAYERCOUNT];
   int numAlive = current_players;
-
+  for (n = 0; n < PLAYERCOUNT; n++){
+    isAlive[n] = 1;
+  }
+  
 #define	DAYPREP 10
 #define VOTEPREP 11
 #define NIGHTPREP 12
@@ -326,7 +326,7 @@ int main() {
       dayCtr++;
       timeStart = time(NULL);
       playerNoms = (int *)calloc(n, sizeof(int));
-      daytimeRemaining = 30;
+      daytimeRemaining = 10;
       timeElapsed = 0;
       sprintf(server_msg, "It is currently day %d\n", dayCtr);
       serverAll(server_msg);
@@ -369,11 +369,12 @@ int main() {
       break;
       
     case DAY:;
-      printf("it's daytime, timeElapsed is %d\n ", timeElapsed);
+      printf("n at any given time: %d\n", n);
+      
       timeElapsed = (time(NULL) - timeStart);
 	
       if ((daytimeRemaining - timeElapsed) % 5 == 0) {
-	sprintf(server_msg, "Daytime remaining: %d", daytimeRemaining);
+	sprintf(server_msg, "Daytime remaining: %d", daytimeRemaining - timeElapsed);
 	serverAll(server_msg);
       }
       //DAY ENDS
@@ -382,19 +383,23 @@ int main() {
 	phase = NIGHTPREP;
 	free(playerNoms);
       }
-
+      
+      
       //let's parse that chat shall we.
       for (n = 0; n < PLAYERCOUNT; n++){
 	if (!isAlive[n] || !strlen(msgs[n])) continue;
+
 	strcpy(msg, msgs[n]);
 	memset(msgs[n], 0, MESSAGE_BUFFER_SIZE);
+	printf("for player %d\n", n);
 	printf("message is: %s\n", msg);
 	printf("message[0] is %c\n", msg[0]);
-	if (msg[0] == '\\'){//is actually just a \ indicating command
-	  printf("if\n");
-	  //find command
+	
+	if (msg[0] == '\\'){
+
 	  char * cmd;
 	  cmd = strsep(&msg, " ");
+	  
 	  if (!strcmp(cmd, "\\w")){ //whispering
 	    char * to = strsep(&msg, " ");
 	    int actualTo = nameToID(to, names);
@@ -404,19 +409,20 @@ int main() {
 	    else {
 	      sprintf(server_msg, "%s is whispering to %s", IDToName(n, names), IDToName(actualTo, names));
 	      serverAll(server_msg);
-	      sprintf(server_msg, "[%s] %s", IDToName(n, names), msg);
+	      sprintf(server_msg, "[%s][whisper][%s] %s", IDToName(n, names), IDToName(actualTo, names), msg);
 	      sendTo(actualTo, server_msg);
+	      sendTo(n, server_msg);
 	    }
 	  }
-	  else if (!strcmp(cmd, "\\nom")){
-	    //nicer
-	    //token is new nom;
+	  
+	  else if (!strcmp(cmd, "\\nom")){ //nomination
+
 	    int newNom = nameToID(msg, names);
 	    if (newNom == n){
 	      serverTo(n, "You cannot nominate yourself!");
 	    }
 	    else if (newNom == -1){
-	      serverTo(n, "Invalid nomination");
+	      serverTo(n, "Invalid nomination.");
 	    }
 	    else {
 	      sprintf(server_msg,"%s has been nominated by %s.", IDToName(newNom, names), IDToName(n, names));
@@ -433,15 +439,18 @@ int main() {
 	    }
 	  }
 	  
+	  else {
+	    serverTo(n, "Invalid command.");
+	  }
+	  
 	}
 	else {//completely normal chat string
 	    printf("else\n");
 	    sprintf(server_msg,"[%s] \t %s", IDToName(n, names), msg);
+	    printf("message is %s\n", server_msg);
 	    sendAll(server_msg); //needs to be processed
 	}
 	
-	
-	timeStart = time(NULL);
       }
       
       break;
@@ -535,8 +544,8 @@ int main() {
       
       else {
 	
-	int c1;
-	int c2;
+	int c1 = -1;
+	int c2 = -1;
 	
 	while (1){
 	  int validFlag = 1;
@@ -549,7 +558,7 @@ int main() {
 	      serverTo(roles[0], "Invalid name");
 	    }
 	  }
-	  
+
 	  msg = msgs[roles[1]];
 	  if (strlen(msg)){
 	    c2 = nameToID(msg, names);
@@ -571,7 +580,7 @@ int main() {
 	    sprintf(server_msg, "Your partner has chosen to target %s", IDToName(c1, names));
 	    serverTo(roles[1], server_msg);
 	         
-	    if (c1 != c2){
+	    if (c1 != c2 || c1 == -1 || c2 == -1){
 	      serverTo(roles[0], "You must agree on the target!\n");
 	      serverTo(roles[1], "You must agree on the target!\n");
 	    }
