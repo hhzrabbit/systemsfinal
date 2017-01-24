@@ -48,7 +48,7 @@ int main( int argc, char ** argv ) {
   box(display, 0, 0);
   box(chat, 0, 0);
 
-  keypad(chat, true);
+  //keypad(chat, true);
   wmove(chat, 1, 1); //move cursor inside chat box
 
     

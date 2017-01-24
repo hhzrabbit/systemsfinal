@@ -12,8 +12,8 @@
 #include "networking.h"
 #include "memctl.h"
 
-#define MAX_PLAYERS 2
-#define PLAYERCOUNT 2
+#define MAX_PLAYERS 3
+#define PLAYERCOUNT 3
 struct sockpair {
   int sock_id;
   int shm_id;
@@ -139,7 +139,7 @@ int main() {
   }
  
   
-  printf("[SERVER] enough players, game beginning\n");
+  printf("[SERVER] enough players, game beginning.\n");
 
   serverAll("Welcome to Mafia!");
   char * server_msg;
@@ -187,71 +187,67 @@ int main() {
   }
   int nameCheck[PLAYERCOUNT];
   memset(nameCheck, 0, sizeof(nameCheck));
-  int nameFlag;
+  
+  int nameFlag = 0;
+  
   serverAll("What is your name?");
   
-  while (1){
-    //    printf("Checking 0\n");
+  while (!nameFlag){
     nameFlag = 1;
     for (i = 0; i < current_players; i++){
       printf("Checking namecheck %d\n", nameCheck[i]);
       if (!nameCheck[i]){
-	printf("1\n");
+        
 	nameFlag = 0;
 	struct sockpair player = players[i];
 	semdown(player.sem_id);
-	printf("2\n");
-	//	printf("Checking 1\n");
+
 	char * shm = (char *) shmat(player.shm_id, 0, 0);
 
 	if ( strlen(shm) ) { //if shm not empty
-	  printf("Checking -1\n");
 	  strcpy(names[i], shm);     
 	  sprintf(server_msg, "Welcome, %s.", names[i]);
 	  serverAll(server_msg);
+	  nameCheck[i] = 1;
 	  char emptyStr[] = "";
 	  shm = strcpy(shm, emptyStr);
 	}
-	//	printf("Checking 2\n");
+	
 	shmdt(shm);
 	semup(player.sem_id);
       }
       
       sleep(1);
     }
-    if (nameFlag == 1) break;
   }
-  /*
   
-  serverAll("Now assigning roles");
+  
+  serverAll("Now assigning roles.");
   //distribute 1-playercount among 1-8
   for (n = 0; n < current_players; n++){//initialize
     roles[n] = n;
   }
-  printf("done\n");
+  
   //grab a random player from the list...
   for (n = 0; n < 5; n++){//let's shake it up
     //swap rand.
-    printf("trying to randomize\n");
     int first = abs(randInt()) % current_players;
-    printf("first index %d", first);
     int second = abs(randInt()) % current_players;
-    printf("second index %d", second);
     int temp = roles[first];
     roles[first] = roles[second];
     roles[second] = temp;
     printf("first is now %d", roles[first]);
     printf("second is now %d", roles[second]);
   }
-  printf("done2\n");
+  
   printf("roles[0] is %d\n", roles[0]);
   
   printf("roles[1] is %d\n", roles[1]);
   
   printf("roles[2] is %d\n", roles[2]);
+  
   serverAll("randomized");
   sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!\n", IDToName(roles[1], names));
-  printf("was sprinting the error\n");
   serverTo(roles[0], server_msg);
   sprintf(server_msg, "You are in the mafia! Your partner is %s. Survive!\n", IDToName(roles[0], names));
   serverTo(roles[1], server_msg);
@@ -260,6 +256,7 @@ int main() {
     serverTo(roles[n], "You are a townsperson! Find out who the mafia are.\n");
   }
 
+  /*
   //  roles[0] = 1 means player 1 has role 0, which is mafia. index is the player id. 
 
   //MIDGAME
