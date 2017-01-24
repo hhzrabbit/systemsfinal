@@ -56,7 +56,7 @@ void sendTo(int playerID, char * message) {
   char *p = strchr(message, '\0');
   *p = '|';
   *(p+1) = '\0'; //risky bois
-  printf("sending to [%d]: \"%s\"\n", playerID, message); 
+  //printf("sending to [%d]: \"%s\"\n", playerID, message); 
   write(player.sock_id, message, strlen(message));
   *p = '\0';
 }
@@ -214,7 +214,7 @@ int main() {
 
 	if ( strlen(shm) ) { //if shm not empty
 	  strcpy(names[i], shm);	  
-	  sprintf(server_msg, "Welcome, %s.", names[i]);
+	  sprintf(server_msg, "Welcome %s.", names[i]);
 	  serverAll(server_msg);
 	  nameCheck[i] = 1;
 	  char emptyStr[] = "";
@@ -310,21 +310,19 @@ int main() {
       struct sockpair player = players[i];
       semdown(player.sem_id);
       char * shm = (char *) shmat(player.shm_id, 0, 0);
-      //      printf("reading shm: [%s]\n", shm);
+      printf("reading shm: [%s]\n", shm);
+
       if ( strlen(shm) ) { //if shm not empty
-	printf("passed strlen(shm)\n");
-	//parse the crap outta it RIGHT HER
+	printf("i is currently %d\n", i);
 	if (!strlen(msgs[i])){
 	  strcpy(msgs[i], shm);
-	  printf("msgs[i] %d, %s\n", i, msgs[i]);
 	  memset(shm, 0, MESSAGE_BUFFER_SIZE);
+	  printf("verify msgs %s\n", msgs[i]);
 	  //sendAll(shm);
 	  //	  char emptyStr[] = "";
 	  //	  shm = strcpy(shm, emptyStr);
 	}
       }
-      else
-	printf("strlen(shm) failed\n");
       shmdt(shm);
       semup(player.sem_id);
     }
@@ -338,7 +336,7 @@ int main() {
       dayCtr++;
       timeStart = time(NULL);
       playerNoms = (int *)calloc(n, sizeof(int));
-      daytimeRemaining = 5;
+      daytimeRemaining = 25;
       timeElapsed = 0;
       sprintf(server_msg, "It is currently day %d\n", dayCtr);
       serverAll(server_msg);
@@ -385,8 +383,7 @@ int main() {
       break;
       
     case DAY:;
-      printf("n at any given time: %d\n", n);
-      
+      /*
       timeElapsed = (time(NULL) - timeStart);
 	
       if ((daytimeRemaining - timeElapsed) % 5 == 0) {
@@ -399,13 +396,22 @@ int main() {
 	phase = NIGHTPREP;
 	free(playerNoms);
       }
-      
+      */
       
       //let's parse that chat shall we.
       for (n = 0; n < PLAYERCOUNT; n++){
+	
 	if (!isAlive[n] || !strlen(msgs[n])) continue;
 
+	//printf("N is currently %d\n", n);
+	//printf("msgs[0] is %s\n", msgs[0]);
+	//printf("msgs[1] is %s\n", msgs[1]);
+	//printf("msgs[2] is %s\n", msgs[2]);
+
+	//printf("and msg is %s\n", msg);
+	//char empty[] = "";
 	strcpy(msg, msgs[n]);
+	//strcpy(msg, empty);
 	memset(msgs[n], 0, MESSAGE_BUFFER_SIZE);
 	printf("for player %d\n", n);
 	printf("message is: %s\n", msg);
@@ -414,10 +420,13 @@ int main() {
 	if (msg[0] == '\\'){
 
 	  char * cmd;
-	  cmd = strsep(&msg, " ");
+	  char * cpy = (char *)malloc(MESSAGE_BUFFER_SIZE);
+	  char * cpyAnchor = cpy;
+	  strcpy(cpy, msg);
+	  cmd = strsep(&cpy, " ");
 	  
 	  if (!strcmp(cmd, "\\w")){ //whispering
-	    char * to = strsep(&msg, " ");
+	    char * to = strsep(&cpy, " ");
 	    int actualTo = nameToID(to, names);
 	    if (actualTo == -1 || actualTo == n){
 	      serverTo(n, "Invalid name.");
@@ -425,7 +434,7 @@ int main() {
 	    else {
 	      sprintf(server_msg, "%s is whispering to %s", IDToName(n, names), IDToName(actualTo, names));
 	      serverAll(server_msg);
-	      sprintf(server_msg, "[%s][whisper][%s] %s", IDToName(n, names), IDToName(actualTo, names), msg);
+	      sprintf(server_msg, "[%s][whisper][%s] %s", IDToName(n, names), IDToName(actualTo, names), cpy);
 	      sendTo(actualTo, server_msg);
 	      sendTo(n, server_msg);
 	    }
@@ -433,7 +442,7 @@ int main() {
 	  
 	  else if (!strcmp(cmd, "\\nom")){ //nomination
 
-	    int newNom = nameToID(msg, names);
+	    int newNom = nameToID(cpy, names);
 	    if (newNom == n){
 	      serverTo(n, "You cannot nominate yourself!");
 	    }
@@ -458,6 +467,8 @@ int main() {
 	  else {
 	    serverTo(n, "Invalid command.");
 	  }
+
+	  free(cpyAnchor);
 	  
 	}
 	else {//completely normal chat string

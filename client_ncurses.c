@@ -22,11 +22,11 @@ void displayMsg( char * message ) {
   }
 
   char newkek[100];
-  sprintf(newkek, " (chatLine=%d)", chatLine);
+  //sprintf(newkek, " (chatLine=%d)", chatLine);
 
   char newnewkek[1000];
   strcpy(newnewkek, message);
-  strcat(newnewkek, newkek);
+  //strcat(newnewkek, newkek);
   mvwprintw(display, 1 + chatLine, 1, newnewkek);
   chatLine++;
   
