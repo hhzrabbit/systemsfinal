@@ -460,6 +460,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	    printf("cpy: %s\n", cpy);
 	    int newNom = nameToID(cpy, names);
 	    printf("newNom: %d\n", newNom);
+	    printf("newNom's name: %s\n", IDToName(newNom, names);
 	    if (newNom == n){
 	      serverTo(n, "You cannot nominate yourself!");
 	    }
