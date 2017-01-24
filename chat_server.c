@@ -311,7 +311,7 @@ int main() {
       struct sockpair player = players[i];
       semdown(player.sem_id);
       char * shm = (char *) shmat(player.shm_id, 0, 0);
-      printf("Reading shm: [%s]\n", shm);
+      //printf("Reading shm: [%s]\n", shm);
 
       if ( strlen(shm) ) { //if shm not empty
 	printf("i is currently %d\n", i);
@@ -578,8 +578,8 @@ int main() {
 
 	//CASE 2 ALIVE
 	else {
-	  msg = msgs[roles[0]];
-	  
+	  strcpy(msg, msgs[roles[0]]);
+	  memset(msgs[roles[0]], 0, MESSAGE_BUFFER_SIZE);
 	  if (strlen(msg)){
 
 	    char * cmd;
@@ -592,10 +592,11 @@ int main() {
 	      memset(msgs[roles[0]], 0, MESSAGE_BUFFER_SIZE);
 	      if (!isAlive[c1] || c1 == -1 || c1 == roles[0] || c1 == roles[1]) {
 		serverTo(roles[0], "Invalid name");
+		c1 = -1;
 	      }
 	      else {
 		sprintf(server_msg, "You have chosen to target %s", IDToName(c1, names));
-		serverTo(roles[1], server_msg);
+		serverTo(roles[0], server_msg);
 		sprintf(server_msg, "Your partner has chosen to target %s", IDToName(c1, names));
 		serverTo(roles[1], server_msg);
 	      }
@@ -610,7 +611,8 @@ int main() {
 	    
 	  }
  
-	  msg = msgs[roles[1]];
+	  strcpy(msg, msgs[roles[1]]);
+	  memset(msgs[roles[1]], 0, MESSAGE_BUFFER_SIZE);
 	  if (strlen(msg)){
 	    char * cmd;
 	    char * cpy = (char *)malloc(MESSAGE_BUFFER_SIZE);
@@ -618,28 +620,30 @@ int main() {
 	    strcpy(cpy, msg);
 	    cmd = strsep(&cpy, " ");
 	    if (!strcmp(cmd, "\\c")){
+	      printf("Yeah\n");
 	      c2 = nameToID(cpy, names);
 	      memset(msgs[roles[1]], 0, MESSAGE_BUFFER_SIZE);
 	      if (!isAlive[c1] || c1 == -1 || c1 == roles[0] || c1 == roles[1]) {
 		serverTo(roles[1], "Invalid name");
+		c2 = -1;
 	      }
 	      else {
 		sprintf(server_msg, "You have chosen to target %s", IDToName(c2, names));
 		serverTo(roles[1], server_msg);
 		sprintf(server_msg, "Your partner has chosen to target %s", IDToName(c2, names));
-		serverTo(roles[1], server_msg);
+		serverTo(roles[0], server_msg);
 	      }
 	    }
+	    
 	    else {
 	      sprintf(server_msg,"[%s] \t %s", IDToName(roles[1], names), msg);
 	      sendTo(roles[0], server_msg);
 	      sendTo(roles[1], server_msg);//it's chat
 	    }
+
 	    
 	    free(cpyAnchor);
-	    
 	  }
-
 	  if (c1 == -1 || c2 == -1){
 	    serverTo(roles[0], "Waiting for selection.");
 	    serverTo(roles[1], "Waiting for selection.");
