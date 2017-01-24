@@ -456,10 +456,11 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	  
 	  else if (!strcmp(cmd, "\\nom")){ //nomination
 
-	    //	    printf("cpy: %s\n", cpy);
+	    printf("cpy: %s\n", cpy);
 	    int newNom = nameToID(cpy, names);
-	    //	    printf("newNom: %d\n", newNom);
-	    //	    printf("newNom's name: %s\n", IDToName(newNom, names));
+	    printf("newNom: %d\n", newNom);
+	    printf("newNom's name: %s\n", IDToName(newNom, names));
+	    
 	    if (newNom == n){
 	      serverTo(n, "You cannot nominate yourself!");
 	    }
@@ -469,8 +470,8 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	    else {
 	      sprintf(server_msg,"%s has been nominated by %s.", IDToName(newNom, names), IDToName(n, names));
 	      serverAll(server_msg);
-	      *(playerNoms + newNom) += 1;
-	      if (* (playerNoms + newNom) == 3){
+	      playerNoms[newNom] += 1;
+	      if (playerNoms[newNom]) == 3){
 		//vote triggered
 		sprintf(server_msg, "%s has been accused! Should they be executed? (yes/no)", IDToName(newNom, names));
 		serverAll(server_msg);
