@@ -110,7 +110,8 @@ int main( int argc, char ** argv ) {
   
   wmove(chat, 1, 1);
   wprintw(chat, ">>> ");
-  
+  wmove(chat, 1, 4); //might be redundant
+    
   wrefresh(chat);
   wrefresh(display);
   
@@ -184,6 +185,8 @@ int main( int argc, char ** argv ) {
     wclrtoeol(chat);
     
     wprintw(chat, ">>> ");
+    wmove(chat, 1, 4);
+    wrefresh(chat);
   }
 
   endwin(); //never happens lmao

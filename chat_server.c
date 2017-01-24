@@ -226,7 +226,7 @@ int main() {
 	semup(player.sem_id);
       }
     }
-    nanosleep((const struct timespec[]){{0, 500000000L}}, NULL);
+    nanosleep((const struct timespec[]){{0, 100000000L}}, NULL);
   }
   
   serverAll("Now assigning roles.");
@@ -326,7 +326,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
       semup(player.sem_id);
     }
 
-    nanosleep((const struct timespec[]){{0, 500000000L}}, NULL);
+    nanosleep((const struct timespec[]){{0, 100000000L}}, NULL);
     
     //MAIN GAME: PREP 
     switch (phase){
@@ -361,7 +361,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
       break;
 
     case NIGHTPREP:
-      sprintf(server_msg, "It is currently night %d\n", dayCtr);
+      sprintf(server_msg, "It is currently night %d", dayCtr);
       serverAll(server_msg);
       phase = NIGHT;
       break;
@@ -380,7 +380,8 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
       break;
 
     case COPPREP:
-      serverTo(roles[2], "Wake up, cop. Pick a person to investigate.\n");
+      serverAll("The cop is now investigating a suspect...");
+      serverTo(roles[2], "Wake up, cop. Pick a person to investigate.");
       phase = COP;
       success = 0;
       break;
@@ -403,7 +404,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
       
       //let's parse that chat shall we.
       for (n = 0; n < PLAYERCOUNT; n++){
-	
+	printf("message by %s, who is alive? <%d>", IDToName(n, names), isAlive[n]);
 	if (!isAlive[n] || !strlen(msgs[n])) continue;
 
 	//printf("N is currently %d\n", n);
@@ -459,7 +460,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	      if (* (playerNoms + newNom) == 3){
 		//vote triggered
 		sprintf(server_msg, "%s has been accused! Should they be executed? (yes/no)", IDToName(newNom, names));
-		serverAll(server_msg);	    
+		serverAll(server_msg);
 		phase = VOTEPREP;
 		
 		daytimeRemaining -= timeElapsed;
@@ -575,7 +576,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	}
 
 	//CASE 2 ALIVE
-	else {
+	else {	  
 	  strcpy(msg, msgs[roles[0]]);
 	  memset(msgs[roles[0]], 0, MESSAGE_BUFFER_SIZE);
 	  if (strlen(msg)){
@@ -588,6 +589,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	    if (!strcmp(cmd, "\\c")){
 	      c1 = nameToID(cpy, names);
 	      memset(msgs[roles[0]], 0, MESSAGE_BUFFER_SIZE);
+	      printf("c1: %d\n", c1);
 	      if (!isAlive[c1] || c1 == -1 || c1 == roles[0] || c1 == roles[1]) {
 		serverTo(roles[0], "Invalid name");
 		c1 = -1;
@@ -605,8 +607,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	      sendTo(roles[1], server_msg);//it's chat
 	    }
 	    
-	    free(cpyAnchor);
-	    
+	    free(cpyAnchor);	    
 	  }
  
 	  strcpy(msg, msgs[roles[1]]);
@@ -708,10 +709,10 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
       
       else{
 	if ( copChoice == roles[0] || copChoice == roles[1] ){
-	  serverTo(roles[2], "This person is a member of the mafia.\n");
+	  serverTo(roles[2], "This person is a member of the mafia.");
 	}
 	else {
-	  serverTo(roles[2], "This person is an innocent townsperson.\n");
+	  serverTo(roles[2], "This person is an innocent townsperson.");
 	}
 	phase = DAYPREP;
       }
@@ -726,11 +727,11 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
   //end game
   //(exited a while loop - if sum of alive mafia members > sum of townspeople)
   if (isAlive[0] + isAlive[1] == 0){
-  sendAll("Game over. The townspeople have won!\n");
+  sendAll("Game over. The townspeople have won!");
   exit(0);
   }
   else if (isAlive[0] + isAlive[1] > numAlive / 2){
-  sendAll("Game over. (Defaulted) The mafia outnumber the townspeople, and have won!\n");
+  sendAll("Game over. (Defaulted) The mafia outnumber the townspeople, and have won!");
   exit(0);
 
   }   
