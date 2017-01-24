@@ -217,7 +217,7 @@ int main() {
     }
     if (nameFlag == 1) break;
   }
-
+  /*
   
   serverAll("Now assigning roles");
   //distribute 1-playercount among 1-8
@@ -640,5 +640,6 @@ int main() {
 
   }
 
+  */
   return 0;
 }
