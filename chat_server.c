@@ -517,8 +517,7 @@ int main() {
 	  msg = msgs[roles[0]];
 	  if (strlen(msg)){
 	  c = nameToID(msg, names);
-	  char emptyStr[] = "";
-	  strcpy(msgs[roles[0]], emptyStr);
+	  memset(msgs[roles[0]], 0, MESSAGE_BUFFER_SIZE);
 	  if (!isAlive[c] || c == -1 || c == roles[0]) {
 	    serverTo(roles[0], "Invalid name");
 	  }
@@ -532,8 +531,7 @@ int main() {
 	  msg = msgs[roles[1]];
 	  if (strlen(msg)){
 	  c = nameToID(msg, names);
-	  char emptyStr[] = "";
-	  strcpy(msgs[roles[1]], emptyStr);
+	  memset(msgs[roles[1]], 0, MESSAGE_BUFFER_SIZE);
 	  if (!isAlive[c] || c == -1 || c == roles[1]) {
 	    serverTo(roles[1], "Invalid name");
 	  }
@@ -620,8 +618,7 @@ int main() {
 	
 	msg = msgs[roles[2]]; 
 	int copChoice = nameToID(msg, names);
-	char emptyStr[] = "";
-	strcpy(msgs[roles[2]], emptyStr);
+	memset(msgs[roles[2]], 0, MESSAGE_BUFFER_SIZE);
 
 	if (!isAlive[copChoice] || copChoice == -1 || copChoice == roles[2]){
 	  serverTo(roles[2], "Invalid name");
