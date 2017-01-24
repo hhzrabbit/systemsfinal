@@ -71,10 +71,11 @@ int main( int argc, char ** argv ) {
   
   char buffer[MESSAGE_BUFFER_SIZE];
   while ( read(server_sock, buffer, sizeof(buffer)) ) {
-    displayMsg(chat, display, buffer);
     if ( ! strcmp(buffer, "***BEGIN***") ) {
       break;
     }
+    displayMsg(chat, display, buffer);
+    memset(buffer, 0, MESSAGE_BUFFER_SIZE);
   }
 
 
@@ -84,10 +85,7 @@ int main( int argc, char ** argv ) {
     while ( read(server_sock, servMsg, sizeof(servMsg) ) ) {
       displayMsg(chat, display, servMsg);
       memset(servMsg, 0, MESSAGE_BUFFER_SIZE);
-      //free(servMsg);
-      //servMsg = (char *) calloc (sizeof(char), MESSAGE_BUFFER_SIZE);
-      
-      //      mvwprintw(display, 0, 0, "%s", servMsg);
+
     }
   }
   
@@ -95,6 +93,8 @@ int main( int argc, char ** argv ) {
 
   //this is the chat that sends to server
   while (1) {
+    //THE CRITICAL BUG FIXER :/
+    //displayMsg(chat, display, "Active parent");
     //wprintw(chat, ">>> ");
     wrefresh(chat);
     

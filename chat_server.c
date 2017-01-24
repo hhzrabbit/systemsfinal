@@ -12,8 +12,8 @@
 #include "networking.h"
 #include "memctl.h"
 
-#define MAX_PLAYERS 1
-#define PLAYERCOUNT 1
+#define MAX_PLAYERS 2
+#define PLAYERCOUNT 2
 struct sockpair {
   int sock_id;
   int shm_id;
@@ -43,6 +43,7 @@ void sendAll(char * message) {
 
 void serverAll(char * message){
   char * msg = (char *) malloc( MESSAGE_BUFFER_SIZE );
+  memset(msg, 0, MESSAGE_BUFFER_SIZE);
   sprintf(msg, "[SERVER] %s", message);
   sendAll(msg);
   free(msg);
@@ -181,6 +182,9 @@ int main() {
   int dead[PLAYERCOUNT]; //0 is alive, 1 is dead
   int n;
   char * names[PLAYERCOUNT]; //idth index is name
+  for (n = 0; n < PLAYERCOUNT; n++){
+    names[n] = (char *)malloc(MESSAGE_BUFFER_SIZE);
+  }
   int nameCheck[PLAYERCOUNT];
   memset(nameCheck, 0, sizeof(nameCheck));
   int nameFlag;
@@ -199,9 +203,9 @@ int main() {
 	printf("2\n");
 	//	printf("Checking 1\n");
 	char * shm = (char *) shmat(player.shm_id, 0, 0);
-	//	printf("Checking 3\n");
+
 	if ( strlen(shm) ) { //if shm not empty
-	  //	  printf("Checking -1\n");
+	  printf("Checking -1\n");
 	  strcpy(names[i], shm);     
 	  sprintf(server_msg, "Welcome, %s.", names[i]);
 	  serverAll(server_msg);
