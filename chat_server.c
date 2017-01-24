@@ -676,12 +676,15 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	
 	numAlive -= 1;
 
-	serverAll("%s has been killed by the mafia.", IDToName(c, names));
+
+	sprintf(server_msg, "%s has been killed by the mafia.", IDToName(c, names));
+	serverAll(server_msg);
 	if (c == roles[2]) {
-	  serverAll("%s was a cop.", IDToName(c, names));
+	  sprintf(server_msg, "%s was a cop.", IDToName(c, names));
 	} else {
-	  serverAll("%s was a townsman.", IDToName(c, names));
+	  sprintf(server_msg, "%s was a townsman.", IDToName(c, names));
 	}
+	serverAll(server_msg);
 	
 	if (isAlive[roles[2]])
 	  phase = COPPREP;
