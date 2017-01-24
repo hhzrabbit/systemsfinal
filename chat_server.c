@@ -307,6 +307,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
     //update msgs
     for (i = 0; i < current_players; i++) {
       if ( ! isAlive[i] ) continue;
+      else printf("[%s]: I AM ALIVE\n", IDToName(i, names));
       struct sockpair player = players[i];      
       semdown(player.sem_id);
       char * shm = (char *) shmat(player.shm_id, 0, 0);
@@ -327,7 +328,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
       semup(player.sem_id);
     }
 
-    nanosleep((const struct timespec[]){{0, 100000000L}}, NULL);
+    sleep(1);
     
     //MAIN GAME: PREP 
     switch (phase){
