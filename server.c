@@ -471,7 +471,7 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	      sprintf(server_msg,"%s has been nominated by %s.", IDToName(newNom, names), IDToName(n, names));
 	      serverAll(server_msg);
 	      playerNoms[newNom] += 1;
-	      if (playerNoms[newNom]) == 3){
+	      if (playerNoms[newNom] == 3){
 		//vote triggered
 		sprintf(server_msg, "%s has been accused! Should they be executed? (yes/no)", IDToName(newNom, names));
 		serverAll(server_msg);
