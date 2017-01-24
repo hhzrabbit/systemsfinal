@@ -106,6 +106,8 @@ int main( int argc, char ** argv ) {
   //this is the chat that sends to server
   while (1) {
     //wprintw(chat, ">>> ");
+    wrefresh(chat);
+    //wrefresh(display);
     wgetstr(chat, buffer);
     
     write (server_sock, buffer, sizeof(buffer) );
