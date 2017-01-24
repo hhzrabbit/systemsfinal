@@ -428,6 +428,14 @@ for (n = PLAYERCOUNT - 1; n >= 0; --n){
 	  char * cpyAnchor = cpy;
 	  strcpy(cpy, msg);
 	  cmd = strsep(&cpy, " ");
+
+	  /*
+	    if (!strcmp(cmd, "\\h")) {
+	    
+	    }
+
+	   */
+
 	  
 	  if (!strcmp(cmd, "\\w")){ //whispering
 	    char * to = strsep(&cpy, " ");
