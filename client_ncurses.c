@@ -25,6 +25,7 @@ void displayMsg( char * message ) {
     chatLine--;
   }
 
+<<<<<<< HEAD
   //  char newkek[100];
   //  sprintf(newkek, " (chatLine=%d)", chatLine);
 
@@ -34,6 +35,15 @@ void displayMsg( char * message ) {
   //  mvwprintw(display, 1 + chatLine, 1, newnewkek);
 
   mvwprintw(display, 1 + chatLine, 1, message);
+=======
+  char newkek[100];
+  //sprintf(newkek, " (chatLine=%d)", chatLine);
+
+  char newnewkek[1000];
+  strcpy(newnewkek, message);
+  //strcat(newnewkek, newkek);
+  mvwprintw(display, 1 + chatLine, 1, newnewkek);
+>>>>>>> 89d7659da16a65956b38e00a1d189ad843b81d25
   chatLine++;
   
   box(display, 0, 0);
