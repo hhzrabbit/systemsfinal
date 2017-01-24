@@ -307,7 +307,7 @@ int main() {
       char * shm = (char *) shmat(player.shm_id, 0, 0);
       //      printf("reading shm: [%s]\n", shm);
       if ( strlen(shm) ) { //if shm not empty
-
+	printf("passed strlen(shm)\n");
 	//parse the crap outta it RIGHT HER
 	if (!strlen(msgs[i])){
 	  strcpy(msgs[i], shm);
@@ -318,6 +318,8 @@ int main() {
 	  //	  shm = strcpy(shm, emptyStr);
 	}
       }
+      else
+	printf("strlen(shm) failed\n");
       shmdt(shm);
       semup(player.sem_id);
     }
